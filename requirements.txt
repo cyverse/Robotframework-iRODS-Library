@@ -1,0 +1,2 @@
+robotframework
+git+git://github.com/irods/python-irodsclient.git
