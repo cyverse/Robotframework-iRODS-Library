@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 from os.path import abspath, dirname, join
-execfile(join(dirname(abspath(__file__)), 'src', 'PythoniRodsLibrary', 'version.py'))
+execfile(join(dirname(abspath(__file__)), 'src', 'iRODSLibrary', 'version.py'))
 
 DESCRIPTION = """
 Robot Framework keyword library wrapper around the python-irodsclient.
@@ -30,11 +30,10 @@ setup(name         = 'Robotframework-iRODS',
       platforms    = 'any',
       classifiers  = CLASSIFIERS.splitlines(),
       package_dir  = {'' : 'src'},
-      packages     = ['PythoniRodsLibrary'],
-      package_data = {'PythoniRodsLibrary': ['tests/*.robot']},
+      packages     = ['iRODSLibrary'],
+      package_data = {'iRODSLibrary': ['tests/*.robot']},
       requires=[
-          'robotframework',
-          'git+https://github.com/irods/python-irodsclient.git'
+          'robotframework'
       ],
 )
 

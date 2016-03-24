@@ -1,7 +1,7 @@
 from robot.libraries.BuiltIn import BuiltIn 
 from irods.session import iRODSSession
 
-class PythonIrodsConnectionManager(object):
+class PythoniRODSKeywords(object):
     """
     Connectino manager handles the connection & disconnnection to the irods grid.
     """ 

@@ -1,5 +1,5 @@
 *** Settings ***
-Library           PythonIrodsConnectionManager
+Library           iRODSLibrary
 
 *** Variables ***
 ${irodshost}      localhost
