@@ -1,0 +1,28 @@
+*** Settings ***
+Library           PythonIrodsConnectionManager
+
+*** Variables ***
+${irodshost}      localhost
+${irodsport}      1247
+${username}       my_username
+${password}       my_password
+${zone}           my_zone
+
+*** Test Cases ***
+Connect-Not-Valid
+    Comment    Connect to iRods Grid
+    ${output} =    Check Connection
+    Should Not Be True    ${output}
+
+Connect-Valid
+    Comment    Connect to iRods Grid
+    Connect To Irods    ${irodshost}    ${irodsport}    {username}    ${password},${zone}
+    ${output} =    Check Connection
+    Should Be True    ${output}
+
+Connect-Disconnect
+    Comment    Connect and disconnect to iRods Grid
+    Connect To Irods    ${irodshost}    ${irodsport}    {username}    ${password},${zone}
+    Disconnect To Irods
+    ${output} =    Check Connection
+    Should Not Be True    ${output}
