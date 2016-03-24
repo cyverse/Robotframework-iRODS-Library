@@ -11,7 +11,8 @@ class iRODSLibrary(PythoniRODSKeywords):
 
 
         Examples:
-        | Create Session | google | http://www.google.com |
+        | Connect To Grid | iPlant | data.iplantcollaborative.org | ${1247} | jdoe | jdoePassword | tempZone
 
     """
+    
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
