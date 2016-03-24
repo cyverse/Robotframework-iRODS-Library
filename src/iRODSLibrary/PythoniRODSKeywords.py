@@ -53,7 +53,7 @@ class PythoniRODSKeywords(object):
         self._user = user
         self._password = password
         self._zone = zone
-        logger.debug('Creating Connection using : alias=%s, host=%s, port=%s, user=%s, password=%s, zone=%s ' \
+        logger.debug('Creating Connection using : alias=%s, host=%s, port=%s, user=%s, password=%s, zone=%s '
                     % (alias, host, port, user, password, zone))
         self._session = iRODSSession(self, alias, host=host, port=port, user=user, password=password, zone=zone)
 
