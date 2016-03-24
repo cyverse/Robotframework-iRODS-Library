@@ -1,1 +1,7 @@
 *.swp
+.idea
+*.pyc
+report.html
+log.html
+output.xml
+build
