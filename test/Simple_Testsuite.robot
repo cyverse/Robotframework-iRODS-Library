@@ -16,13 +16,13 @@ Connect-Not-Valid
 
 Connect-Valid
     Comment    Connect to iRods Grid
-    Connect To Irods    ${irodshost}    ${irodsport}    {username}    ${password},${zone}
+    Connect To Grid    ${irodshost}    ${irodsport}    {username}    ${password},${zone}
     ${output} =    Check Connection
     Should Be True    ${output}
 
 Connect-Disconnect
     Comment    Connect and disconnect to iRods Grid
-    Connect To Irods    ${irodshost}    ${irodsport}    {username}    ${password},${zone}
-    Disconnect To Irods
+    Connect To Grid    ${irodshost}    ${irodsport}    {username}    ${password},${zone}
+    Disconnect From Grid
     ${output} =    Check Connection
     Should Not Be True    ${output}

@@ -15,8 +15,16 @@ class PythonIrodsConnectionManager(object):
         self._session = None
         self._builtin = BuiltIn()
     
-    def connect_to_irods(self, host='localhost', port=1247, user='rods', password='rods', zone='tempZone'):
-        """Create iRODSSession variable with variables provided"""
+    def connect_to_grid(self, host='localhost', port=1247, user='rods', password='rods', zone='tempZone'):
+        """Create connection to an iRODS grid
+         using the parameters passed in.
+           'host' - the fqdn of the iRODS server
+           'port' - the port to connect on
+           'user' - a valid iRODS username
+           'password' - the iRODS password for the username given
+           'zone' - a valid iRODS zone, tempZone is used by default
+
+        """
         self._host = host
         self._port = port
         self._user = user
@@ -25,11 +33,16 @@ class PythonIrodsConnectionManager(object):
         self._session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone)
     
     def check_connection(self):
+        """ See if there is a valid connection to the iRODS server
+
+        """
         if self._session is None:
             return False
         else:
             return True
 
-    def disconnect_to_irods(self):
-        """Delete connection variable to irods"""
+    def disconnect_from_grid(self):
+        """ Delete connection to the iRODS server
+
+        """
         self._session = None
