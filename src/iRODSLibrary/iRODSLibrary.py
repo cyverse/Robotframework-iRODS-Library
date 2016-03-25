@@ -3,9 +3,11 @@ import tempfile
 
 from irods.session import iRODSSession
 import robot
+from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn 
 
-class PythoniRODSKeywords(object):
+class iRODSLibrary(object):
+
     """
     List of available keywords for robot framework's use in testing
     """ 
@@ -15,13 +17,18 @@ class PythoniRODSKeywords(object):
         self._builtin = BuiltIn()
     
     def connect_to_grid(self, host='localhost', port=1247, user='rods', password='rods', zone='tempZone', alias='default_connection'):
-        """Create connection to an iRODS grid
-         using the parameters passed in.
-           'host' - the fqdn of the iRODS server
-           'port' - the port to connect on
-           'user' - a valid iRODS username
-           'password' - the iRODS password for the username given
-           'zone' - a valid iRODS zone, tempZone is used by default
+        """ Create connection to an iRODS grid
+            using the parameters passed in.
+            'alias'    - Robotframework alias to identify the connection
+            'host'     - the fqdn of the iRODS server
+            'port'     - the port to connect on
+            'user'     - a valid iRODS username
+            'password' - the iRODS password for the username given
+            'zone'     - a valid iRODS zone, tempZone is used by default
+
+        Example usage:
+        | # To connect to foo.bar.org's iRODS service on port 1247 |
+        | Connect To Grid | foo.bar.org | ${1247} | jdoe | jdoePassword | tempZone | UAT
 
         """
         host = str(host)
@@ -30,6 +37,8 @@ class PythoniRODSKeywords(object):
         password = str(password)
         zone = str(zone)
         session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone)
+        logger.info('Creating connection using : alias=%s, host=%s, port=%s, user=%s, password=%s,'
+                    'zone=%s ' % (alias, host, port, user, password, zone))
         self._cache.register(session, alias=alias)
     
     def check_connection(self, alias='default_connection'):
@@ -38,6 +47,7 @@ class PythoniRODSKeywords(object):
         """
         try:
             session = self._cache.switch(alias)
+            logger.info('Verifying connection : alias=%s' % (alias))
             if session is not None:
                 return True
             else:
@@ -47,7 +57,7 @@ class PythoniRODSKeywords(object):
 
 
     def list_contents_of_directory(self, path=None, alias="default_connection"):
-        """Provide a path to list contents of
+        """ Provide a path to list contents of
 
         """
         if path is None:
@@ -58,10 +68,11 @@ class PythoniRODSKeywords(object):
         list_of_contents = [obj.name for obj in coll.data_objects]
         # Grab dirs and place them in the list of contents
         list_of_contents.extend([col.path for col in coll.subcollections])
+        logger.info('Returning contents of collection : alias=%s, path=%s' % (alias, path))
         return list_of_contents
     
     def get_file_from_irods(self, path=None, alias="default_connection"):
-        """Provide a path for a file to be pulled down
+        """ Provide a path for a file to be pulled down
 
         """
         path = str(path)
@@ -87,6 +98,7 @@ class PythoniRODSKeywords(object):
         """
         try:
             session = self._cache.switch(alias)
+            logger.info('Disconnecting connetion : alias=%s' % (alias))
             self._cache.register(None, alias=alias)
         except RuntimeError:
             return False
