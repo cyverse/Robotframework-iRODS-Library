@@ -16,6 +16,7 @@ Connect-Not-Valid
     [Tags]    functional
     Comment    Connect to iRods Grid
     ${output} =    Check Connection
+    Log    ${output}
     Should Not Be True    ${output}
 
 Connect-Valid
@@ -23,6 +24,7 @@ Connect-Valid
     Comment    Connect to iRods Grid
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output} =    Check Connection
+    Log    ${output}
     Should Be True    ${output}
 
 Connect-Disconnect
@@ -31,6 +33,7 @@ Connect-Disconnect
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     Disconnect From Grid
     ${output} =    Check Connection
+    Log    ${output}
     Should Not Be True    ${output}
 
 List-Contents-Of-Path
@@ -38,15 +41,18 @@ List-Contents-Of-Path
     Comment    Connect and list contents of path
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${output_list}
     List Should Contain Value    ${output_list}    TestOutFile1
 
 Get-File
     [Tags]    functional
     Comment     Connect and grab file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
-    ${output_list} =    List Contents of Directory    /iplant/home/${username}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${output_list}
     ${first_in_list} =    Get From List    ${output_list}    0
-    Get File From Irods    /iplant/home/${username}/${first_in_list} 
+    Log    ${first_in_list}
+    Get File From Irods    /iplant/home/${username}/${first_in_list}
     File Should Exist    ${first_in_list}
 
 Put-File
@@ -54,5 +60,6 @@ Put-File
     Comment    Connect and put file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     Put File    /iplant/home/${username}    ${my_file}
-    ${output_list} =    List Contents of Directory    /iplant/home/${username}  ${my_file}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}  ${my_file}
+    Log    ${output_list}
     List Should Contain Value    ${output_list}    ${my_file}
