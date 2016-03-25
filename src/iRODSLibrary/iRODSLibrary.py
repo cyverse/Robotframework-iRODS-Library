@@ -36,7 +36,7 @@ class iRODSLibrary(object):
         user = str(user)
         password = str(password)
         zone = str(zone)
-        logger.info('Creating connection using : alias=%s, host=%s, port=%s, user=%s, password=%s,'
+        logger.info('Creating connection using : alias=%s, host=%s, port=%s, user=%s, password=%s, '
                     'zone=%s ' % (alias, host, port, user, password, zone))
         session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone)
         self._cache.register(session, alias=alias)
