@@ -36,7 +36,7 @@ class iRODSLibrary(object):
         user = str(user)
         password = str(password)
         zone = str(zone)
-        logger.info('Creating connection using : alias=%s, host=%s, port=%s, user=%s, password=%s, '
+        logger.info('Connect To Grid using : alias=%s, host=%s, port=%s, user=%s, password=%s, '
                     'zone=%s ' % (alias, host, port, user, password, zone))
         session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone)
         self._cache.register(session, alias=alias)
@@ -46,7 +46,7 @@ class iRODSLibrary(object):
 
         """
         try:
-            logger.info('Verifying connection : alias=%s' % (alias))
+            logger.info('Check Connection : alias=%s' % (alias))
             session = self._cache.switch(alias)
             if session is not None:
                 return True
@@ -60,7 +60,7 @@ class iRODSLibrary(object):
         """ Provide a path to list contents of
 
         """
-        logger.info('Returning contents of collection : alias=%s, path=%s' % (alias, path))
+        logger.info('List Contents Of Collection : alias=%s, path=%s' % (alias, path))
         if path is None:
             return []
         session = self._cache.switch(alias)
@@ -71,11 +71,34 @@ class iRODSLibrary(object):
         list_of_contents.extend([col.path for col in coll.subcollections])
         return list_of_contents
     
+    def put_file_into_irods(self, path=None, filename="./test.txt", alias="default_connection"):
+        """ Provide a path for a file to be uploaded
+
+        """
+        logger.info('Put File Into iRODS : alias=%s, path=%s, filename=%s ' % (alias, path, filename))
+        path = str(path)
+        base_filename = os.path.basename(str(filename))
+        irods_file_path = path + "/" + base_filename
+        session = self._cache.switch(alias)
+        try:
+            data_obj = session.data_objects.get(irods_file_path)
+        except:
+            data_obj = session.data_objects.create(irods_file_path)
+        finally:
+            file_local = open(filename, 'rb')
+            payload = file_local.read()
+            file_irods = data_obj.open('r+')
+            file_irods.write(payload)
+            file_local.close()
+            file_irods.close()
+        # For testing purposes
+        return base_filename
+
     def get_file_from_irods(self, path=None, alias="default_connection"):
         """ Provide a path for a file to be pulled down
 
         """
-        logger.info('Dowloading a file from iRODS using : alias=%s, path=%s ' % (alias, path))
+        logger.info('Get File From iRODS : alias=%s, path=%s ' % (alias, path))
         path = str(path)
         new_file_path = os.path.basename(path)
         source = self.get_source(path=path, alias=alias)
@@ -98,7 +121,7 @@ class iRODSLibrary(object):
 
         """
         try:
-            logger.info('Disconnecting connetion : alias=%s' % (alias))
+            logger.info('Disconnect From Grid : alias=%s' % (alias))
             session = self._cache.switch(alias)
             self._cache.register(None, alias=alias)
         except RuntimeError:
