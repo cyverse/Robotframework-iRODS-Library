@@ -56,7 +56,7 @@ class iRODSLibrary(object):
             return False
 
 
-    def list_contents_of_directory(self, path=None, alias="default_connection"):
+    def list_contents_of_collection(self, path=None, alias="default_connection"):
         """ Provide a path to list contents of
 
         """

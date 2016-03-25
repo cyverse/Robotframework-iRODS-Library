@@ -9,7 +9,6 @@ ${irodsport}      1247
 ${username}       username_here
 ${password}       password_here
 ${zone}           zone_here
-
 ${my_file}        test.txt
 
 *** Test Cases ***
@@ -38,22 +37,22 @@ List-Contents-Of-Path
     [Tags]    smoke
     Comment    Connect and list contents of path
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
-    ${output_list} =        List Contents of Directory    /iplant/home/${username}
-    List Should Contain Value     ${output_list}    TestOutFile1
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    List Should Contain Value    ${output_list}    TestOutFile1
 
 Get-File
     [Tags]    functional
     Comment     Connect and grab file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
-    ${output_list}=         List Contents of Directory    /iplant/home/${username}
-    ${first_in_list}=       Get From List           ${output_list}    0
+    ${output_list} =    List Contents of Directory    /iplant/home/${username}
+    ${first_in_list} =    Get From List    ${output_list}    0
     Get File From Irods    /iplant/home/${username}/${first_in_list} 
-    File Should Exist       ${first_in_list}    
+    File Should Exist    ${first_in_list}
 
 Put-File
     [Tags]    functional    skipped
     Comment    Connect and put file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
-    Put File           /iplant/home/${username}    ${my_file}
-    ${output_list} =        List Contents of Directory    /iplant/home/${username}  ${my_file}
-    List Should Contain Value     ${output_list}    ${my_file}
+    Put File    /iplant/home/${username}    ${my_file}
+    ${output_list} =    List Contents of Directory    /iplant/home/${username}  ${my_file}
+    List Should Contain Value    ${output_list}    ${my_file}
