@@ -1,6 +1,7 @@
 *** Settings ***
 Library           PythoniRODSKeywords
 Library           Collections
+Library           OperatingSystem
 
 *** Variables ***
 ${irodshost}      host_here
@@ -35,6 +36,14 @@ List-Contents-Of-Path
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output_list} =        List Contents of Directory    /iplant/home/${username}
     List Should Contain Value     ${output_list}    TestOutFile1
+
+Get-File
+    Comment     Connect and grab file
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
+    ${output_list}=         List Contents of Directory    /iplant/home/${username}
+    ${first_in_list}=       Get From List           ${output_list}    0
+    Get File From Irods    /iplant/home/${username}/${first_in_list} 
+    File Should Exist       ${first_in_list}    
 
 #Put-File
 #    Comment    Connect and put file

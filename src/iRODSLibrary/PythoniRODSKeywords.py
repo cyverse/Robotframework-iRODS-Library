@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 from irods.session import iRODSSession
 import robot
 from robot.libraries.BuiltIn import BuiltIn 
@@ -56,6 +59,27 @@ class PythoniRODSKeywords(object):
         # Grab dirs and place them in the list of contents
         list_of_contents.extend([col.path for col in coll.subcollections])
         return list_of_contents
+    
+    def get_file_from_irods(self, path=None, alias="default_connection"):
+        """Provide a path for a file to be pulled down
+
+        """
+        path = str(path)
+        new_file_path = os.path.basename(path)
+        source = self.get_source(path=path, alias=alias)
+        file = open(new_file_path, 'w+')
+        file.write(source)
+        file.close()
+
+    def get_source(self, path, alias="default_connection"):
+            session = self._cache.switch(alias)
+            source = session.data_objects.get(path)
+            file = source.open()
+            payload = ''
+            for r,row in enumerate(file.read()):
+                payload += row
+            file.close()
+            return payload
 
     def disconnect_from_grid(self, alias='default_connection'):
         """ Delete connection to the iRODS server
