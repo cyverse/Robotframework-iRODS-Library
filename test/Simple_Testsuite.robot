@@ -1,5 +1,5 @@
 *** Settings ***
-Library           PythoniRODSKeywords
+Library           iRODSLibrary
 Library           Collections
 Library           OperatingSystem
 

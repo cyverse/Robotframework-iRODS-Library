@@ -1,10 +1,10 @@
-from iRODSLibrary import PythoniRODSKeywords
+from iRODSLibrary import iRODSLibrary
 from version import VERSION
 
 _version_ = VERSION
 
 
-class iRODSLibrary(PythoniRODSKeywords):
+class iRODSLibrary(iRODSLibrary):
     """ iRODSLibrary is a client keyword library that uses
     the python-irodsclient module from iRODS
     https://github.com/irods/python-irodsclient

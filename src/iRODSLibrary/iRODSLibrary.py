@@ -5,7 +5,7 @@ from irods.session import iRODSSession
 import robot
 from robot.libraries.BuiltIn import BuiltIn 
 
-class PythoniRODSKeywords(object):
+class iRODSLibrary(object):
 
     """
     List of available keywords for robot framework's use in testing
@@ -27,7 +27,7 @@ class PythoniRODSKeywords(object):
 
         Example usage:
         | # To connect to foo.bar.org's iRODS service on port 1247 |
-        | Connect To Grid | foo.bar.org | ${1247} | jdoe | jdoePassword | tempZone
+        | Connect To Grid | foo.bar.org | ${1247} | jdoe | jdoePassword | tempZone | UAT
 
         """
         host = str(host)
