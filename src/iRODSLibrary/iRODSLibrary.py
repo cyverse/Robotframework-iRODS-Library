@@ -75,6 +75,7 @@ class iRODSLibrary(object):
         """ Provide a path for a file to be pulled down
 
         """
+        logger.info('Dowloading a file from iRODS using : alias=%s, path=%s ' % (alias, path))
         path = str(path)
         new_file_path = os.path.basename(path)
         source = self.get_source(path=path, alias=alias)
