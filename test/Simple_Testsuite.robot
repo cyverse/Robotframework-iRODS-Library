@@ -9,7 +9,7 @@ ${irodsport}      1247
 ${username}       username_here
 ${password}       password_here
 ${zone}           zone_here
-${my_file}        test.txt
+${my_file}        ../../test/put_test.txt
 
 *** Test Cases ***
 Connect-Not-Valid
@@ -42,10 +42,10 @@ List-Contents-Of-Path
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
     Log    ${output_list}
-    List Should Contain Value    ${output_list}    TestOutFile1
+    List Should Contain Value    ${output_list}    test.txt
 
 Get-File
-    [Tags]    functional
+    [Tags]    functional skipped
     Comment     Connect and grab file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
@@ -59,7 +59,7 @@ Put-File
     [Tags]    functional    skipped
     Comment    Connect and put file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
-    Put File    /iplant/home/${username}    ${my_file}
-    ${output_list} =    List Contents of Collection    /iplant/home/${username}  ${my_file}
+    ${output_base_filename}=   Put File Into Irods    /iplant/home/${username}    ${my_file}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
     Log    ${output_list}
-    List Should Contain Value    ${output_list}    ${my_file}
+    List Should Contain Value    ${output_list}    ${output_base_filename}

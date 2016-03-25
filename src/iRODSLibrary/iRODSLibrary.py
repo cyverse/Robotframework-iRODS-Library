@@ -71,6 +71,28 @@ class iRODSLibrary(object):
         list_of_contents.extend([col.path for col in coll.subcollections])
         return list_of_contents
     
+    def put_file_into_irods(self, path=None, filename="./test.txt", alias="default_connection"):
+        """ Provide a path for a file to be uploaded
+
+        """
+        path = str(path)
+        base_filename = os.path.basename(str(filename))
+        irods_file_path = path + "/" + base_filename
+        session = self._cache.switch(alias)
+        try:
+            data_obj = session.data_objects.get(irods_file_path)
+        except:
+            data_obj = session.data_objects.create(irods_file_path)
+        finally:
+            file_local = open(filename, 'rb')
+            payload = file_local.read()
+            file_irods = data_obj.open('r+')
+            file_irods.write(payload)
+            file_local.close()
+            file_irods.close()
+        # For testing purposes
+        return base_filename         
+        
     def get_file_from_irods(self, path=None, alias="default_connection"):
         """ Provide a path for a file to be pulled down
 
