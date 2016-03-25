@@ -56,10 +56,10 @@ Get-File
     File Should Exist    ${first_in_list}
 
 Put-File
-    [Tags]    functional    skipped
+    [Tags]    functional
     Comment    Connect and put file
-    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
-    ${output_base_filename}=   Put File Into Irods    /iplant/home/${username}    ${my_file}
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${output_base_filename} =    Put File Into Irods    /iplant/home/${username}    ${my_file}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
     Log    ${output_list}
     List Should Contain Value    ${output_list}    ${output_base_filename}
