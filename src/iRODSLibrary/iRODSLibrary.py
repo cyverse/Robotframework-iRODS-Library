@@ -36,9 +36,9 @@ class iRODSLibrary(object):
         user = str(user)
         password = str(password)
         zone = str(zone)
-        session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone)
         logger.info('Creating connection using : alias=%s, host=%s, port=%s, user=%s, password=%s,'
                     'zone=%s ' % (alias, host, port, user, password, zone))
+        session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone)
         self._cache.register(session, alias=alias)
     
     def check_connection(self, alias='default_connection'):
@@ -46,8 +46,8 @@ class iRODSLibrary(object):
 
         """
         try:
-            session = self._cache.switch(alias)
             logger.info('Verifying connection : alias=%s' % (alias))
+            session = self._cache.switch(alias)
             if session is not None:
                 return True
             else:
@@ -60,6 +60,7 @@ class iRODSLibrary(object):
         """ Provide a path to list contents of
 
         """
+        logger.info('Returning contents of collection : alias=%s, path=%s' % (alias, path))
         if path is None:
             return []
         session = self._cache.switch(alias)
@@ -68,7 +69,6 @@ class iRODSLibrary(object):
         list_of_contents = [obj.name for obj in coll.data_objects]
         # Grab dirs and place them in the list of contents
         list_of_contents.extend([col.path for col in coll.subcollections])
-        logger.info('Returning contents of collection : alias=%s, path=%s' % (alias, path))
         return list_of_contents
     
     def get_file_from_irods(self, path=None, alias="default_connection"):
@@ -97,8 +97,8 @@ class iRODSLibrary(object):
 
         """
         try:
-            session = self._cache.switch(alias)
             logger.info('Disconnecting connetion : alias=%s' % (alias))
+            session = self._cache.switch(alias)
             self._cache.register(None, alias=alias)
         except RuntimeError:
             return False
