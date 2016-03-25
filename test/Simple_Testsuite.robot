@@ -14,7 +14,7 @@ ${my_file}        test.txt
 
 *** Test Cases ***
 Connect-Not-Valid
-    [Tags]    regression
+    [Tags]    functional
     Comment    Connect to iRods Grid
     ${output} =    Check Connection
     Should Not Be True    ${output}
@@ -42,7 +42,7 @@ List-Contents-Of-Path
     List Should Contain Value     ${output_list}    TestOutFile1
 
 Get-File
-    [Tags]    regression
+    [Tags]    functional
     Comment     Connect and grab file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output_list}=         List Contents of Directory    /iplant/home/${username}
@@ -51,7 +51,7 @@ Get-File
     File Should Exist       ${first_in_list}    
 
 Put-File
-    [Tags]    skipped
+    [Tags]    functional    skipped
     Comment    Connect and put file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     Put File           /iplant/home/${username}    ${my_file}
