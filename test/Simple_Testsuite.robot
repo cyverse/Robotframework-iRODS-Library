@@ -45,7 +45,7 @@ List-Contents-Of-Path
     List Should Contain Value    ${output_list}    test.txt
 
 Get-File
-    [Tags]    functional skipped
+    [Tags]    functional    skipped
     Comment     Connect and grab file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
