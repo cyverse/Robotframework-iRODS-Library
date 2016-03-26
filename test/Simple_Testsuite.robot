@@ -63,3 +63,49 @@ Put-File
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
     Log    ${output_list}
     List Should Contain Value    ${output_list}    ${output_base_filename}
+
+Add-Metadata-For-File
+    [Tags]    functional 
+    Comment    Connect and add metadata for first file in collection
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${collection_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${collection_list}
+    ${first_in_list} =    Get From List    ${collection_list}    0
+    Log    ${first_in_list}
+    Add Metadata For File   /iplant/home/${username}/${first_in_list}    key_1    value_1
+    ${metadata_list} =    Get Metadata For File   /iplant/home/${username}/${first_in_list}
+    Log    ${metadata_list}
+    List Should Contain Value    ${metadata_list}    key_1 
+
+Add-Metadata-For-Collection
+    [Tags]    functional 
+    Comment    Connect and add metadata for first file in collection
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${collection_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${collection_list}
+    ${first_in_list} =    Get From List    ${collection_list}    0
+    Log    ${first_in_list}
+    Add Metadata For Collection   /iplant/home/${username}/analyses    key_1    value_1
+    ${metadata_list} =    Get Metadata For Collection   /iplant/home/${username}/analyses
+    Log    ${metadata_list}
+    List Should Contain Value    ${metadata_list}    key_1 
+
+Retrieve-Metadata-For-File
+    [Tags]    functional
+    Comment    Connect and grab metadata from first file in collection
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${collection_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${collection_list}
+    ${first_in_list} =    Get From List    ${collection_list}    0
+    Log    ${first_in_list}
+    ${metadata_list} =    Get Metadata For File   /iplant/home/${username}/${first_in_list}
+    Log    ${metadata_list}
+    List Should Contain Value    ${metadata_list}    ipc_UUID
+
+Retrieve-Metadata-For-Directory
+    [Tags]    functional
+    Comment    Connect and grab metadata from first file in collection
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${metadata_list} =    Get Metadata For Collection   /iplant/home/${username}/analyses
+    Log    ${metadata_list}
+    List Should Contain Value    ${metadata_list}    ipc_UUID

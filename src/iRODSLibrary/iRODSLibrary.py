@@ -107,14 +107,39 @@ class iRODSLibrary(object):
         file.close()
 
     def get_source(self, path, alias="default_connection"):
-            session = self._cache.switch(alias)
-            source = session.data_objects.get(path)
-            file = source.open()
-            payload = ''
-            for r,row in enumerate(file.read()):
-                payload += row
-            file.close()
-            return payload
+        session = self._cache.switch(alias)
+        source = session.data_objects.get(path)
+        file = source.open()
+        payload = ''
+        for r,row in enumerate(file.read()):
+            payload += row
+        file.close()
+        return payload
+    
+    def add_metadata_for_file(self, path, key="default_key", value="default_value", alias="default_connection"):
+        session = self._cache.switch(alias) 
+        obj = session.data_objects.get(str(path))
+        meta_data_file_list = self.get_metadata_for_file(path, alias)
+        if key not in meta_data_file_list and value not in meta_data_file_list:
+            obj.metadata.add(key, value)
+
+    def add_metadata_for_collection(self, path, key="default_key", value="default_value", alias="default_connection"):
+        session = self._cache.switch(alias) 
+        obj = session.collections.get(str(path))
+        meta_data_collection_list = self.get_metadata_for_collection(path, alias)
+        if key not in meta_data_collection_list and value not in meta_data_collection_list:
+            obj.metadata.add(key, value)
+
+    def get_metadata_for_file(self, path, alias="default_connection"):
+        session = self._cache.switch(alias)
+        obj = session.data_objects.get(str(path))
+        return [x.name for x in obj.metadata.items()]
+
+    def get_metadata_for_collection(self, path, alias="default_connection"):
+        session = self._cache.switch(alias)
+        obj = session.collections.get(str(path))
+        return [x.name for x in obj.metadata.items()]
+
 
     def disconnect_from_grid(self, alias='default_connection'):
         """ Delete connection to the iRODS server
