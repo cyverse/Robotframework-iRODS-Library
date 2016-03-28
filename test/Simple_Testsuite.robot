@@ -109,3 +109,29 @@ Retrieve-Metadata-For-Directory
     ${metadata_list} =    Get Metadata For Collection   /iplant/home/${username}/analyses
     Log    ${metadata_list}
     List Should Contain Value    ${metadata_list}    ipc_UUID
+
+Create a collection
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${NewCollName}    NewCollectionName
+    Comment    Connect and create a new collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
+
+Rename a collection
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${CurColName}    NewCollectionName
+    Set Test Variable    ${NewColName}    CollectionNameRenamed
+    Comment    Connect and delte an existing collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}
+
+Delete a collection
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${CollName}    CollectionNameRenamed
+    Comment    Connect and delte an existing collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    Delete A Collection    /iplant/home/${UserName}/${CollName}    False    True
+
