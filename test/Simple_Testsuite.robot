@@ -45,7 +45,7 @@ List-Contents-Of-Path
     List Should Contain Value    ${output_list}    test.txt
 
 Get-File
-    [Tags]    functional skipped
+    [Tags]    functional    skipped
     Comment     Connect and grab file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
@@ -109,3 +109,58 @@ Retrieve-Metadata-For-Directory
     ${metadata_list} =    Get Metadata For Collection   /iplant/home/${username}/analyses
     Log    ${metadata_list}
     List Should Contain Value    ${metadata_list}    ipc_UUID
+
+Create a collection
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${NewCollName}    NewCollectionName
+    Comment    Connect and create a new collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
+
+Attempt to Create a collection that already exists
+    [Tags]    regression
+    Comment    Define variables
+    Set Test Variable    ${NewCollName}    NewCollectionName
+    Comment    Connect and create a new collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
+    Should Contain    ${CollectionID}    Error message about already existing collection
+
+Rename a collection
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${CurColName}    NewCollectionName
+    Set Test Variable    ${NewColName}    CollectionNameRenamed
+    Comment    Connect and delte an existing collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}
+
+Rename a collection that doesn't exist
+    [Tags]    regression
+    Comment    Define variables
+    Set Test Variable    ${CurColName}    NonExistantCollectionName
+    Set Test Variable    ${NewColName}    ShouldNeverExistCollectionName
+    Comment    Connect and delte an existing collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}
+    Comment    Trap for error message being returned
+    Should Contain    ${output}    Error message about collection not existing
+
+Delete a collection
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${CollName}    CollectionNameRenamed
+    Comment    Connect and delte an existing collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    Delete A Collection    /iplant/home/${UserName}/${CollName}    False    True
+
+Delete a collection that doesn't exist
+    [Tags]    regression
+    Comment    Define variables
+    Set Test Variable    ${CollName}    NonExistantCollectionName
+    Comment    Connect and delte an existing collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    Delete A Collection    /iplant/home/${UserName}/${CollName}    False    True
+    Comment    Trap for error message being returned
+    Should Contain    ${output}    Error message about collection not existing

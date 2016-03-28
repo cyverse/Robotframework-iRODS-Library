@@ -55,6 +55,35 @@ class iRODSLibrary(object):
         except RuntimeError:
             return False
 
+    def create_a_collection(self, path=None, alias="default_connection"):
+        """ Create a new iRODS collection at the given path
+
+        """
+        logger.info('Create a Collection : alias=%s, path=%s' % (alias, path))
+        session = self._cache.switch(alias)
+        coll = session.collections.create(path)
+        return coll.id
+
+
+    def rename_a_collection(self, oldpath=None, newpath=None, alias="default_connection"):
+        """ Rename an existing iRODS collection
+
+        """
+        logger.info('Rename a Collection : alias=%s, oldpath=%s, newpath=%s' % (alias, oldpath, newpath))
+        session = self._cache.switch(alias)
+        coll = session.collections.move(oldpath, newpath)
+
+    def delete_a_collection(self, path=None, recursive=True, force=False, alias="default_connection"):
+        """ Delete an existing iRODS collection at the given path
+
+            'path' = the collection you want to delete (full path)
+            'recursive' = boolean defaults to true
+            'force' = boolean defaults to false (all items sent to trash)
+
+        """
+        logger.info('Delete a Collection : alias=%s, path=%s, recursive=%s, force=%s' % (alias, path, recursive, force))
+        session = self._cache.switch(alias)
+        coll = session.collections.remove(path)
 
     def list_contents_of_collection(self, path=None, alias="default_connection"):
         """ Provide a path to list contents of
@@ -107,6 +136,10 @@ class iRODSLibrary(object):
         file.close()
 
     def get_source(self, path, alias="default_connection"):
+        """ Get Source
+
+        """
+        logger.info('Get Source : alias=%s, path=%s ' % (alias, path))
         session = self._cache.switch(alias)
         source = session.data_objects.get(path)
         file = source.open()
@@ -117,29 +150,44 @@ class iRODSLibrary(object):
         return payload
     
     def add_metadata_for_file(self, path, key="default_key", value="default_value", alias="default_connection"):
-        session = self._cache.switch(alias) 
+        """ Add metadata for a file using key:value pairs
+
+        """
+        logger.info('Add Metadata For File : alias=%s, path=%s, key=%s, value=%s ' % (alias, path, key, value))
+        session = self._cache.switch(alias)
         obj = session.data_objects.get(str(path))
         meta_data_file_list = self.get_metadata_for_file(path, alias)
         if key not in meta_data_file_list and value not in meta_data_file_list:
             obj.metadata.add(key, value)
 
     def add_metadata_for_collection(self, path, key="default_key", value="default_value", alias="default_connection"):
-        session = self._cache.switch(alias) 
+        """ Add metadata for a Collection using key:value pairs
+
+        """
+        logger.info('Add Metadata For Collection : alias=%s, path=%s, key=%s, value=%s ' % (alias, path, key, value))
+        session = self._cache.switch(alias)
         obj = session.collections.get(str(path))
         meta_data_collection_list = self.get_metadata_for_collection(path, alias)
         if key not in meta_data_collection_list and value not in meta_data_collection_list:
             obj.metadata.add(key, value)
 
     def get_metadata_for_file(self, path, alias="default_connection"):
+        """ Get metadata for a file returning key:value pairs
+
+        """
+        logger.info('Get Metadata For File : alias=%s, path=%s ' % (alias, path))
         session = self._cache.switch(alias)
         obj = session.data_objects.get(str(path))
         return [x.name for x in obj.metadata.items()]
 
     def get_metadata_for_collection(self, path, alias="default_connection"):
+        """ Get metadata for a collection returning key:value pairs
+
+        """
+        logger.info('Get Metadata For Collection : alias=%s, path=%s ' % (alias, path))
         session = self._cache.switch(alias)
         obj = session.collections.get(str(path))
         return [x.name for x in obj.metadata.items()]
-
 
     def disconnect_from_grid(self, alias='default_connection'):
         """ Delete connection to the iRODS server
@@ -151,4 +199,3 @@ class iRODSLibrary(object):
             self._cache.register(None, alias=alias)
         except RuntimeError:
             return False
-             
