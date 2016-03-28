@@ -55,6 +55,35 @@ class iRODSLibrary(object):
         except RuntimeError:
             return False
 
+    def create_a_collection(self, path=None, alias="default_connection"):
+        """ Create a new iRODS collection at the given path
+
+        """
+        logger.info('Create a Collection : alias=%s, path=%s' % (alias, path))
+        session = self._cache.switch(alias)
+        coll = session.collections.create(path)
+        return coll.id
+
+
+    def rename_a_collection(self, oldpath=None, newpath=None, alias="default_connection"):
+        """ Rename an existing iRODS collection
+
+        """
+        logger.info('Rename a Collection : alias=%s, oldpath=%s, newpath=%s' % (alias, oldpath, newpath))
+        session = self._cache.switch(alias)
+        coll = session.collections.move(oldpath, newpath)
+
+    def delete_a_collection(self, path=None, recursive=True, force=False, alias="default_connection"):
+        """ Delete an existing iRODS collection at the given path
+
+            'path' = the collection you want to delete (full path)
+            'recursive' = boolean defaults to true
+            'force' = boolean defaults to false (all items sent to trash)
+
+        """
+        logger.info('Delete a Collection : alias=%s, path=%s, recursive=%s, force=%s' % (alias, path, recursive, force))
+        session = self._cache.switch(alias)
+        coll = session.collections.remove(path)
 
     def list_contents_of_collection(self, path=None, alias="default_connection"):
         """ Provide a path to list contents of
