@@ -118,6 +118,15 @@ Create a collection
     Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
     ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
 
+Attempt to Create a collection that already exists
+    [Tags]    regression
+    Comment    Define variables
+    Set Test Variable    ${NewCollName}    NewCollectionName
+    Comment    Connect and create a new collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
+    Should Contain    ${CollectionID}    Error message about already existing collection
+
 Rename a collection
     [Tags]    functional
     Comment    Define variables
@@ -127,6 +136,17 @@ Rename a collection
     Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
     Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}
 
+Rename a collection that doesn't exist
+    [Tags]    regression
+    Comment    Define variables
+    Set Test Variable    ${CurColName}    NonExistantCollectionName
+    Set Test Variable    ${NewColName}    ShouldNeverExistCollectionName
+    Comment    Connect and delte an existing collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}
+    Comment    Trap for error message being returned
+    Should Contain    ${output}    Error message about collection not existing
+
 Delete a collection
     [Tags]    functional
     Comment    Define variables
@@ -135,3 +155,12 @@ Delete a collection
     Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
     Delete A Collection    /iplant/home/${UserName}/${CollName}    False    True
 
+Delete a collection that doesn't exist
+    [Tags]    regression
+    Comment    Define variables
+    Set Test Variable    ${CollName}    NonExistantCollectionName
+    Comment    Connect and delte an existing collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    Delete A Collection    /iplant/home/${UserName}/${CollName}    False    True
+    Comment    Trap for error message being returned
+    Should Contain    ${output}    Error message about collection not existing
