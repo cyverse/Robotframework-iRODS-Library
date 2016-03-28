@@ -221,14 +221,6 @@ class iRODSLibrary(object):
         obj = session.collections.get(str(path))
         return [x.name for x in obj.metadata.items()]
 
-    def get_server_version(self, alias='default_connection'):
-        """ Retreive the server's version
-
-        """
-        logger.info('Get Server Version : alias=%s ' % (alias))
-        ver = session.version_msg((alias))
-        return ver
-
     def disconnect_from_grid(self, alias='default_connection'):
         """ Delete connection to the iRODS server
 
