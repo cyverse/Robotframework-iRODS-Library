@@ -15,8 +15,9 @@ class iRODSLibrary(object):
         """Create private variables"""
         self._cache = robot.utils.ConnectionCache("No sessions created")
         self._builtin = BuiltIn()
-    
-    def connect_to_grid(self, host='localhost', port=1247, user='rods', password='rods', zone='tempZone', alias='default_connection'):
+
+    def connect_to_grid(self, host='localhost', port=1247, user='rods', password='rods', zone='tempZone',
+                        alias='default_connection'):
         """ Create connection to an iRODS grid
             using the parameters passed in.
             'alias'    - Robotframework alias to identify the connection
@@ -40,7 +41,38 @@ class iRODSLibrary(object):
                     'zone=%s ' % (alias, host, port, user, password, zone))
         session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone)
         self._cache.register(session, alias=alias)
-    
+
+
+    def connect_to_grid_on_behalf(self, host='localhost', port=1247, user='rods', password='rods', zone='tempZone',
+                        client_user='another_user', client_zone='another_zone', alias='default_connection'):
+        """ Create connection to an iRODS grid
+            using the parameters passed in to act on behalf of a user.
+            'alias'       - Robotframework alias to identify the connection
+            'host'        - the fqdn of the iRODS server
+            'port'        - the port to connect on
+            'user'        - a valid iRODS username
+            'password'    - the iRODS password for the username given
+            'zone'        - a valid iRODS zone, tempZone is used by default
+            'client_user' - username of user who is being acted on behalf of
+            'client_zone' - zone of user who is being acted on behalf of
+
+        Example usage:
+        | # To connect to foo.bar.org's iRODS service on port 1247 |
+        | Connect To Grid | foo.bar.org | ${1247} | jdoe | jdoePassword | tempZone | UAT
+
+        """
+        host = str(host)
+        port = int(port)
+        user = str(user)
+        password = str(password)
+        zone = str(zone)
+        logger.info('Connect To Grid On Behalf using : alias=%s, host=%s, port=%s, user=%s, password=%s, '
+                    'zone=%s, client_user=%s, client_zone=%s ' % (alias, host, port, user, password, zone,
+                                                                  client_user, client_zone))
+        session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone, client_user=client_user,
+                               client_zone=client_zone)
+        self._cache.register(session, alias=alias)
+
     def check_connection(self, alias='default_connection'):
         """ See if there is a valid connection to the iRODS server
 
@@ -62,7 +94,7 @@ class iRODSLibrary(object):
         logger.info('Create a Collection : alias=%s, path=%s' % (alias, path))
         session = self._cache.switch(alias)
         coll = session.collections.create(path)
-        return coll.id
+        return coll.path
 
 
     def rename_a_collection(self, oldpath=None, newpath=None, alias="default_connection"):
@@ -188,6 +220,14 @@ class iRODSLibrary(object):
         session = self._cache.switch(alias)
         obj = session.collections.get(str(path))
         return [x.name for x in obj.metadata.items()]
+
+    def get_server_version(self, alias='default_connection'):
+        """ Retreive the server's version
+
+        """
+        logger.info('Get Server Version : alias=%s ' % (alias))
+        ver = session.version_msg((alias))
+        return ver
 
     def disconnect_from_grid(self, alias='default_connection'):
         """ Delete connection to the iRODS server
