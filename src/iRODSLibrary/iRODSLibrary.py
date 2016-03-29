@@ -96,9 +96,10 @@ class iRODSLibrary(object):
         session = self._cache.switch(alias)
         try:
             coll = session.collections.create(path)
+            return coll.path
         except:
             coll = session.collections.get(path)
-        return coll.path
+            return "Error:  The collection already exists"
 
     def rename_a_collection(self, oldpath=None, newpath=None, alias="default_connection"):
         """ Rename an existing iRODS collection
@@ -106,7 +107,11 @@ class iRODSLibrary(object):
         """
         logger.info('Rename a Collection : alias=%s, oldpath=%s, newpath=%s' % (alias, oldpath, newpath))
         session = self._cache.switch(alias)
-        coll = session.collections.move(oldpath, newpath)
+        try:
+            coll = session.collections.move(oldpath, newpath)
+            return 'Renamed oldpath=%s to newpath=%s' % (oldpath, newpath)
+        except:
+            return "Error:  An error occurred"
 
     def delete_a_collection(self, path=None, recursive=True, force=False, alias="default_connection"):
         """ Delete an existing iRODS collection at the given path

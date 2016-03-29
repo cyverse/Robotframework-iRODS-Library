@@ -28,6 +28,28 @@ Create a collection
     ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}    qairods
     Should Contain    ${CollectionPath}    /iplant/home/${UserName}/${NewCollName}
 
+Create a collection that exists
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${NewCollName}    NewCollectionName
+    Comment    Connect and create a new collection
+    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}    qairods
+    Log    ${CollectionPath}
+    Comment    Should Contain    ${CollectionPath}    /iplant/home/${UserName}/${NewCollName}
+    Should Contain    ${CollectionPath}    The collection already exists
+
+Rename a collection that does not exist
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${CurColName}    NonExistCollection
+    Set Test Variable    ${NewColName}    CollectionNameRenamed
+    Comment    Connect and delte an existing collection
+    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    ${output}    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}    qairods
+    Log    ${output}
+    Should Contain    ${output}    An error occurred
+
 Rename a collection
     [Tags]    functional
     Comment    Define variables
