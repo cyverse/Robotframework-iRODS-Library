@@ -231,3 +231,11 @@ class iRODSLibrary(object):
             self._cache.register(None, alias=alias)
         except RuntimeError:
             return False
+
+
+    def disconnect_from_all_grids(self):
+        """ Delete connections to All iRODS servers
+
+        """
+        logger.info('Disconnect From All Grid')
+        self._cache.empty_cache()
