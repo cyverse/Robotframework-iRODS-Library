@@ -232,7 +232,6 @@ class iRODSLibrary(object):
         except RuntimeError:
             return False
 
-
     def disconnect_from_all_grids(self):
         """ Delete connections to All iRODS servers
 
