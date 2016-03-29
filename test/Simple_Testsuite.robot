@@ -46,7 +46,7 @@ List-Contents-Of-Path
     List Should Contain Value    ${output_list}    test.txt
 
 Get-File
-    [Tags]    functional    skipped
+    [Tags]    functional
     Comment     Connect and grab file
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
@@ -66,7 +66,7 @@ Put-File
     List Should Contain Value    ${output_list}    ${output_base_filename}
 
 Add-Metadata-For-File
-    [Tags]    functional 
+    [Tags]    functional
     Comment    Connect and add metadata for first file in collection
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
     ${collection_list} =    List Contents of Collection    /iplant/home/${username}
@@ -79,7 +79,7 @@ Add-Metadata-For-File
     List Should Contain Value    ${metadata_list}    key_1 
 
 Add-Metadata-For-Collection
-    [Tags]    functional 
+    [Tags]    functional
     Comment    Connect and add metadata for first file in collection
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
     ${collection_list} =    List Contents of Collection    /iplant/home/${username}
@@ -120,15 +120,22 @@ Put-Directory
     Log    ${output_list}
     List Should Contain Value    ${output_list}    /iplant/home/${username}/${output_base_filename}
 
+Get-Directory
+    [Tags]    functional
+    Comment     Connect and grab file
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}   ${zone}
+    Get Directory From Irods    /iplant/home/${username}/analyses
+    Directory Should Exist    analyses
+    Directory Should Not Be Empty    analyses
 
-#Create a collection
-#    [Tags]    functional
-#    Comment    Define variables
-#    Set Test Variable    ${NewCollName}    NewCollectionName
-#    Comment    Connect and create a new collection
-#    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
-#    ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
-#
+Create a collection
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${NewCollName}    NewCollectionName
+    Comment    Connect and create a new collection
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
+
 #Attempt to Create a collection that already exists
 #    [Tags]    regression
 #    Comment    Define variables

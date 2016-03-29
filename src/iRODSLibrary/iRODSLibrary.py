@@ -185,13 +185,43 @@ class iRODSLibrary(object):
         # For testing purposes
         return base_filename
 
-    def get_file_from_irods(self, path=None, alias="default_connection"):
+    def get_directory_from_irods(self, path=None, alias="default_connection", local_path=None):
+        """Provide a path for a directory to be pull down
+
+        """
+        logger.info('Get File From iRODS : alias=%s, path=%s, local_path=%s ' % (alias, path, local_path))
+        path = str(path)
+        basename = path.split("/")[-1]
+        session = self._cache.switch(alias)
+        coll = session.collections.get(path)
+
+        # create directory
+        if local_path is None:
+            if not os.path.exists(basename):
+                os.makedirs(basename)
+        else: 
+            if not os.path.exists(local_path):
+                os.makedirs(local_path)
+        # Go down recursively and create files
+        if coll.data_objects != []:
+            for d_o in coll.data_objects:
+                irods_path = path + "/" + d_o.name
+                new_local_path = local_path + "/" + d_o.name if local_path is not None else basename + "/" + d_o.name 
+                self.get_file_from_irods(irods_path, alias=alias, local_path=new_local_path)
+
+        if coll.subcollections !=[]:
+            for col in coll.subcollections:
+                irods_path = path + "/" + col.name
+                new_local_path = local_path + "/" + col.name if local_path is not None else basename + "/" + col.name
+                self.get_directory_from_irods(path=irods_path, alias=alias, local_path=new_local_path)
+
+    def get_file_from_irods(self, path=None, alias="default_connection", local_path=None):
         """ Provide a path for a file to be pulled down
 
         """
-        logger.info('Get File From iRODS : alias=%s, path=%s ' % (alias, path))
+        logger.info('Get File From iRODS : alias=%s, path=%s, local_path=%s ' % (alias, path, local_path))
         path = str(path)
-        new_file_path = os.path.basename(path)
+        new_file_path = os.path.basename(path) if local_path is None else local_path
         source = self.get_source(path=path, alias=alias)
         file = open(new_file_path, 'w+')
         file.write(source)
