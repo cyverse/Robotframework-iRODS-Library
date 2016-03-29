@@ -1,6 +1,7 @@
 import os
 import tempfile
 
+from irods.exception import CollectionDoesNotExist
 from irods.session import iRODSSession
 import robot
 from robot.api import logger
@@ -61,7 +62,10 @@ class iRODSLibrary(object):
         """
         logger.info('Create a Collection : alias=%s, path=%s' % (alias, path))
         session = self._cache.switch(alias)
-        coll = session.collections.create(path)
+        try:
+            coll = session.collections.create(path)
+        except:
+            coll = session.collections.get(path)
         return coll.id
 
 
@@ -85,6 +89,7 @@ class iRODSLibrary(object):
         session = self._cache.switch(alias)
         coll = session.collections.remove(path)
 
+
     def list_contents_of_collection(self, path=None, alias="default_connection"):
         """ Provide a path to list contents of
 
@@ -100,6 +105,32 @@ class iRODSLibrary(object):
         list_of_contents.extend([col.path for col in coll.subcollections])
         return list_of_contents
     
+    def put_directory_into_irods(self, path=None, directory_name="./test_dir", alias="default_connection"):
+        """Provide a path for a directory to be uploaded
+
+        """
+        logger.info('Put Directory Into iRODS : alias=%s, path=%s, directory_name=%s ' % (alias, path, directory_name))
+        session = self._cache.switch(alias)
+        base_dirname = os.path.basename(str(directory_name))
+        irods_dir_path = str(path) + "/" + base_dirname
+        local_absoluate_path = os.path.abspath(directory_name)
+        for dirName, subdirList, fileList in os.walk(local_absoluate_path):
+            diff = os.path.relpath(os.path.abspath(dirName), local_absoluate_path)
+            if diff is ".":  # Top_dir
+                self.create_a_collection(irods_dir_path, alias=alias)
+            else:
+                self.create_a_collection(irods_dir_path +"/"+ diff, alias=alias)
+            for fname in fileList:
+                if diff is ".":
+                    new_irods_file_path = irods_dir_path
+                    local_file_location = local_absoluate_path + "/" + fname
+                else:
+                    new_irods_file_path = irods_dir_path + "/" + diff
+                    local_file_location = local_absoluate_path + "/" + diff + "/" +fname
+                self.put_file_into_irods(path=new_irods_file_path, filename=local_file_location, alias=alias)
+        #For testing purposes
+        return base_dirname 
+ 
     def put_file_into_irods(self, path=None, filename="./test.txt", alias="default_connection"):
         """ Provide a path for a file to be uploaded
 
