@@ -1,5 +1,8 @@
 # Robotframework-iRODS-Library
 
+A library for interacting with Python-iRods from RobotFramework.
+
+
 # Usage
 
 Install Robotframework-iRODSLibrary and it's dependencies
@@ -23,4 +26,5 @@ python -m robot.libdoc src/iRODSLibrary/iRODSLibrary.py docs/iRODSLibrary.html
 # Help
 
 Send your questions to the Robot Framework Users Group
+
 
