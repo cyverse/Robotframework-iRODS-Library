@@ -1,2 +1,2 @@
 robotframework
-git+git://github.com/irods/python-irodsclient.git
+git+git://github.com/irods/python-irodsclient.git#egg=python-irodsclient

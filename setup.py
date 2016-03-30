@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
-
 from os.path import abspath, dirname, join
+
+from pip.req import parse_requirements
+import setuptools
+
 execfile(join(dirname(abspath(__file__)), 'src', 'iRODSLibrary', 'version.py'))
 
 DESCRIPTION = """
@@ -18,23 +20,24 @@ Programming Language :: Python
 Topic :: Software Development :: Testing
 """[1:-1]
 
-setup(name         = 'Robotframework-iRODS',
-      version      = VERSION,
-      description  = 'Robot Framework keyword library wrapper around python-irodsclient',
-      long_description = DESCRIPTION,
-      author       = 'Andre Mercer',
-      author_email = 'amercer@cyverse.org',
-      url          = 'https://github.com/iPlantCollaborativeOpenSource/Robotframework-iRODS-Library',
-      license      = 'Public Domain',
-      keywords     = 'robotframework testing test automation irods client',
-      platforms    = 'any',
-      classifiers  = CLASSIFIERS.splitlines(),
-      package_dir  = {'' : 'src'},
-      packages     = ['iRODSLibrary'],
-      package_data = {'iRODSLibrary': ['tests/*.robot']},
-      requires=[
-          'robotframework'
-      ],
+install_reqs = parse_requirements("requirements.txt", session=False)
+required = [str(ir.req) for ir in install_reqs]
+
+setuptools.setup(
+    name         = 'Robotframework-iRODS',
+    version      = VERSION,
+    description  = 'Robot Framework keyword library wrapper around python-irodsclient',
+    long_description = DESCRIPTION,
+    author       = 'Andre Mercer',
+    author_email = 'amercer@cyverse.org',
+    url          = 'https://github.com/cyverse/Robotframework-iRODS-Library',
+    license      = 'University of Arizona License',
+    packages     = setuptools.find_packages(),
+    install_requires = required,
+    dependency_links= [
+        'git+git://github.com/irods/python-irodsclient.git'
+    ],
+    classifiers  = CLASSIFIERS.splitlines()
 )
 
 """ From now on use this approach
