@@ -1,3 +1,4 @@
 include MANIFEST.in
 include *.rst *.txt LICENSE
+include *.cfg
 recursive-include test *.robot
