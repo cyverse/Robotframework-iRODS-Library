@@ -1,8 +1,6 @@
 from iRODSLibrary import iRODSLibrary
-from version import VERSION
 
-_version_ = VERSION
-
+__version__ = "0.0.3"
 
 class iRODSLibrary(iRODSLibrary):
     """ iRODSLibrary is a client keyword library that uses
