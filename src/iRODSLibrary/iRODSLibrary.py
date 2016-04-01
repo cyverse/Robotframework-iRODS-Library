@@ -1,11 +1,15 @@
 import os
 import tempfile
+import sys  
 
 from irods.exception import CollectionDoesNotExist
 from irods.session import iRODSSession
 import robot
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn 
+
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 class iRODSLibrary(object):
 
@@ -94,6 +98,7 @@ class iRODSLibrary(object):
         """
         logger.info('Create a Collection : alias=%s, path=%s' % (alias, path))
         session = self._cache.switch(alias)
+        path = str(path)
         try:
             coll = session.collections.create(path)
             return coll.path
@@ -123,7 +128,7 @@ class iRODSLibrary(object):
         """
         logger.info('Delete a Collection : alias=%s, path=%s, recursive=%s, force=%s' % (alias, path, recursive, force))
         session = self._cache.switch(alias)
-        coll = session.collections.remove(path)
+        coll = session.collections.remove(str(path))
 
 
     def list_contents_of_collection(self, path=None, alias="default_connection"):
@@ -134,7 +139,7 @@ class iRODSLibrary(object):
         if path is None:
             return []
         session = self._cache.switch(alias)
-        coll = session.collections.get(path)
+        coll = session.collections.get(str(path))
         # Grab files and place them in list of contents
         list_of_contents = [obj.name for obj in coll.data_objects]
         # Grab dirs and place them in the list of contents
