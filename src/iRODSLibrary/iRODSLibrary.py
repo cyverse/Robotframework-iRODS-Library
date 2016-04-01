@@ -66,6 +66,8 @@ class iRODSLibrary(object):
         user = str(user)
         password = str(password)
         zone = str(zone)
+        client_user = str(client_user)
+        client_zone = str(client_zone)
         logger.info('Connect To Grid On Behalf using : alias=%s, host=%s, port=%s, user=%s, password=%s, '
                     'zone=%s, client_user=%s, client_zone=%s ' % (alias, host, port, user, password, zone,
                                                                   client_user, client_zone))
