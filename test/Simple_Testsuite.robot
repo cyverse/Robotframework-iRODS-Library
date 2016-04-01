@@ -115,10 +115,11 @@ Put-Directory
     [Tags]    functional
     Comment    Connect and put directory
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
-    ${output_base_filename} =    Put Directory Into Irods    /iplant/home/${username}    ${put_directory}
+    ${output_base_directory_name} =    Put Directory Into Irods    /iplant/home/${username}    ${put_directory}
+    Log    ${output_base_directory_name}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
     Log    ${output_list}
-    List Should Contain Value    ${output_list}    /iplant/home/${username}/${output_base_filename}
+    List Should Contain Value    ${output_list}    /iplant/home/${username}/${output_base_directory_name}
 
 Get-Directory
     [Tags]    functional
