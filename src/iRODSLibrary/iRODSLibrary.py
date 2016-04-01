@@ -1,15 +1,10 @@
 import os
-import tempfile
-import sys  
 
 from irods.exception import CollectionDoesNotExist
 from irods.session import iRODSSession
 import robot
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn 
-
-reload(sys)  
-sys.setdefaultencoding('utf8')
 
 class iRODSLibrary(object):
 
