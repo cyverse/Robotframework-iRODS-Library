@@ -65,6 +65,19 @@ Put-File
     Log    ${output_list}
     List Should Contain Value    ${output_list}    ${output_base_filename}
 
+Delete-File
+    [Tags]    functional
+    Comment    Connect, put file, then delete
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${output_base_filename} =    Put File Into Irods    /iplant/home/${username}    ${my_file}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${output_list}
+    List Should Contain Value    ${output_list}    ${output_base_filename}
+    Delete_File_From_Irods    /iplant/home/${username}/${output_base_filename}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${output_list}
+    List Should Not Contain Value    ${output_list}    ${output_base_filename}
+
 Add-Metadata-For-File
     [Tags]    functional
     Comment    Connect and add metadata for first file in collection
@@ -136,6 +149,7 @@ Create a collection
     Comment    Connect and create a new collection
     Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
     ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
+
 
 #Attempt to Create a collection that already exists
 #    [Tags]    regression

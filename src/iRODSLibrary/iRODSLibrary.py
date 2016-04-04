@@ -206,6 +206,19 @@ class iRODSLibrary(object):
         # For testing purposes
         return base_filename
 
+    def delete_file_from_irods(self, path=None, alias="default_connection"):
+        """ Provide a path for a file to be deleted
+            
+        """
+        logger.info('Put File Into iRODS : alias=%s, path=%s' % (alias, path))
+        path = str(path)
+        alias = str(alias)
+        session = self._cache.switch(alias)
+        try:
+            session.data_objects.unlink(path)
+        except:
+            print("FILE DOES NOT EXISTS")
+
     def get_directory_from_irods(self, path=None, alias="default_connection", local_path=None):
         """Provide a path for a directory to be pull down
 
