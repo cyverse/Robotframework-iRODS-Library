@@ -37,6 +37,7 @@ class iRODSLibrary(object):
         user = str(user)
         password = str(password)
         zone = str(zone)
+        alias = str(alias)
         logger.info('Connect To Grid using : alias=%s, host=%s, port=%s, user=%s, password=%s, '
                     'zone=%s ' % (alias, host, port, user, password, zone))
         session = iRODSSession(host=host, port=port, user=user, password=password, zone=zone)
@@ -68,6 +69,7 @@ class iRODSLibrary(object):
         zone = str(zone)
         client_user = str(client_user)
         client_zone = str(client_zone)
+        alias = str(alias)
         logger.info('Connect To Grid On Behalf using : alias=%s, host=%s, port=%s, user=%s, password=%s, '
                     'zone=%s, client_user=%s, client_zone=%s ' % (alias, host, port, user, password, zone,
                                                                   client_user, client_zone))
@@ -81,6 +83,7 @@ class iRODSLibrary(object):
         """
         try:
             logger.info('Check Connection : alias=%s' % (alias))
+            alias = str(alias)
             session = self._cache.switch(alias)
             if session is not None:
                 return True
@@ -94,8 +97,9 @@ class iRODSLibrary(object):
 
         """
         logger.info('Create a Collection : alias=%s, path=%s' % (alias, path))
-        session = self._cache.switch(alias)
         path = str(path)
+        alias = str(alias)
+        session = self._cache.switch(alias)
         try:
             coll = session.collections.create(path)
             return coll.path
@@ -108,6 +112,9 @@ class iRODSLibrary(object):
 
         """
         logger.info('Rename a Collection : alias=%s, oldpath=%s, newpath=%s' % (alias, oldpath, newpath))
+        alias = str(alias)
+        oldpath = str(oldpath)
+        newpath = str(newpath)
         session = self._cache.switch(alias)
         try:
             coll = session.collections.move(oldpath, newpath)
@@ -124,8 +131,10 @@ class iRODSLibrary(object):
 
         """
         logger.info('Delete a Collection : alias=%s, path=%s, recursive=%s, force=%s' % (alias, path, recursive, force))
+        alias = str(alias)
+        path = str(path)
         session = self._cache.switch(alias)
-        coll = session.collections.remove(str(path))
+        coll = session.collections.remove(path)
 
 
     def list_contents_of_collection(self, path=None, alias="default_connection"):
@@ -133,10 +142,12 @@ class iRODSLibrary(object):
 
         """
         logger.info('List Contents Of Collection : alias=%s, path=%s' % (alias, path))
+        alias = str(alias)
+        path = str(path)
         if path is None:
             return []
         session = self._cache.switch(alias)
-        coll = session.collections.get(str(path))
+        coll = session.collections.get(path)
         # Grab files and place them in list of contents
         list_of_contents = [obj.name for obj in coll.data_objects]
         # Grab dirs and place them in the list of contents
@@ -148,9 +159,12 @@ class iRODSLibrary(object):
 
         """
         logger.info('Put Directory Into iRODS : alias=%s, path=%s, directory_name=%s ' % (alias, path, directory_name))
+        alias = str(alias)
+        path = str(path)
+        directory_name = str(directory_name)
         session = self._cache.switch(alias)
-        base_dirname = os.path.basename(str(directory_name))
-        irods_dir_path = str(path) + "/" + base_dirname
+        base_dirname = os.path.basename(directory_name)
+        irods_dir_path = path + "/" + base_dirname
         local_absoluate_path = os.path.abspath(directory_name)
         for dirName, subdirList, fileList in os.walk(local_absoluate_path):
             diff = os.path.relpath(os.path.abspath(dirName), local_absoluate_path)
@@ -197,6 +211,7 @@ class iRODSLibrary(object):
 
         """
         logger.info('Get File From iRODS : alias=%s, path=%s, local_path=%s ' % (alias, path, local_path))
+        alias = str(alias)
         path = str(path)
         basename = path.split("/")[-1]
         session = self._cache.switch(alias)
@@ -228,17 +243,20 @@ class iRODSLibrary(object):
         """
         logger.info('Get File From iRODS : alias=%s, path=%s, local_path=%s ' % (alias, path, local_path))
         path = str(path)
+        alias = str(alias)
         new_file_path = os.path.basename(path) if local_path is None else local_path
         source = self.get_source(path=path, alias=alias)
         file = open(new_file_path, 'w+')
         file.write(source)
         file.close()
 
-    def get_source(self, path, alias="default_connection"):
+    def get_source(self, path=None, alias="default_connection"):
         """ Get Source
 
         """
         logger.info('Get Source : alias=%s, path=%s ' % (alias, path))
+        path = str(path)
+        alias = str(alias) 
         session = self._cache.switch(alias)
         source = session.data_objects.get(path)
         file = source.open()
@@ -248,13 +266,15 @@ class iRODSLibrary(object):
         file.close()
         return payload
     
-    def add_metadata_for_file(self, path, key="default_key", value="default_value", alias="default_connection"):
+    def add_metadata_for_file(self, path=None, key="default_key", value="default_value", alias="default_connection"):
         """ Add metadata for a file using key:value pairs
 
         """
         logger.info('Add Metadata For File : alias=%s, path=%s, key=%s, value=%s ' % (alias, path, key, value))
+        alias = str(alias)
+        path = str(path)
         session = self._cache.switch(alias)
-        obj = session.data_objects.get(str(path))
+        obj = session.data_objects.get(path)
         meta_data_file_list = self.get_metadata_for_file(path, alias)
         if key not in meta_data_file_list and value not in meta_data_file_list:
             obj.metadata.add(key, value)
@@ -264,8 +284,10 @@ class iRODSLibrary(object):
 
         """
         logger.info('Add Metadata For Collection : alias=%s, path=%s, key=%s, value=%s ' % (alias, path, key, value))
+        alias = str(alias) 
+        path = str(path)
         session = self._cache.switch(alias)
-        obj = session.collections.get(str(path))
+        obj = session.collections.get(path)
         meta_data_collection_list = self.get_metadata_for_collection(path, alias)
         if key not in meta_data_collection_list and value not in meta_data_collection_list:
             obj.metadata.add(key, value)
@@ -275,8 +297,10 @@ class iRODSLibrary(object):
 
         """
         logger.info('Get Metadata For File : alias=%s, path=%s ' % (alias, path))
+        alias = str(alias)
+        path = str(path)
         session = self._cache.switch(alias)
-        obj = session.data_objects.get(str(path))
+        obj = session.data_objects.get(path)
         return [x.name for x in obj.metadata.items()]
 
     def get_metadata_for_collection(self, path, alias="default_connection"):
@@ -284,8 +308,10 @@ class iRODSLibrary(object):
 
         """
         logger.info('Get Metadata For Collection : alias=%s, path=%s ' % (alias, path))
+        alias = str(alias)
+        path = str(path)
         session = self._cache.switch(alias)
-        obj = session.collections.get(str(path))
+        obj = session.collections.get(path)
         return [x.name for x in obj.metadata.items()]
 
     def disconnect_from_grid(self, alias='default_connection'):
@@ -294,6 +320,7 @@ class iRODSLibrary(object):
         """
         try:
             logger.info('Disconnect From Grid : alias=%s' % (alias))
+            alias = str(alias)
             session = self._cache.switch(alias)
             self._cache.register(None, alias=alias)
         except RuntimeError:
