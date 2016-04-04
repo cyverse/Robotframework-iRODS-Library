@@ -9,8 +9,8 @@ ${irodsport}      1247
 ${username}       username_here
 ${password}       password_here
 ${zone}           zone_here
-${my_file}        ../../test/put_test.txt
-${put_directory}   ../../test/put_dir
+${my_file}        test/put_test.txt
+${put_directory}  test/put_dir
 
 *** Test Cases ***
 Connect-Not-Valid
