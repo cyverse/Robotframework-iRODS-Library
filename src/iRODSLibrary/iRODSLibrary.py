@@ -193,9 +193,9 @@ class iRODSLibrary(object):
         irods_file_path = path + "/" + base_filename
         session = self._cache.switch(alias)
         try:
-            data_obj = session.data_objects.get(irods_file_path)
-        except:
             data_obj = session.data_objects.create(irods_file_path)
+        except:
+            data_obj = session.data_objects.get(irods_file_path)
         finally:
             file_local = open(filename, 'rb')
             payload = file_local.read()
