@@ -189,7 +189,7 @@ class iRODSLibrary(object):
         """
         logger.info('Put File Into iRODS : alias=%s, path=%s, filename=%s ' % (alias, path, filename))
         path = str(path)
-        base_filename = os.path.basename(str(filename)) if new_irods_filename is None else new_irods_filename
+        base_filename = os.path.basename(str(filename)) if new_irods_filename is None else str(new_irods_filename)
         irods_file_path = path + "/" + base_filename
         session = self._cache.switch(alias)
         try:
