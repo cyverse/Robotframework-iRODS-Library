@@ -11,6 +11,7 @@ ${password}       password_here
 ${zone}           zone_here
 ${my_file}        test/put_test.txt
 ${put_directory}  test/put_dir
+${new_filename}   put_new_test.txt
 
 *** Test Cases ***
 Connect-Not-Valid
@@ -64,6 +65,16 @@ Put-File
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
     Log    ${output_list}
     List Should Contain Value    ${output_list}    ${output_base_filename}
+
+Put-File-New-Extension
+    [Tags]    functional
+    Comment    Connect and put file
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${output_base_filename} =    Put File Into Irods    /iplant/home/${username}    ${my_file}    new_irods_filename=${new_filename}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${output_list}
+    List Should Contain Value    ${output_list}    ${output_base_filename}
+
 
 Delete-File
     [Tags]    functional

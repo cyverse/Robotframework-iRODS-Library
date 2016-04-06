@@ -183,13 +183,13 @@ class iRODSLibrary(object):
         #For testing purposes
         return base_dirname 
  
-    def put_file_into_irods(self, path=None, filename="./test.txt", alias="default_connection"):
+    def put_file_into_irods(self, path=None, filename="./test.txt", alias="default_connection", new_irods_filename=None):
         """ Provide a path for a file to be uploaded
 
         """
         logger.info('Put File Into iRODS : alias=%s, path=%s, filename=%s ' % (alias, path, filename))
         path = str(path)
-        base_filename = os.path.basename(str(filename))
+        base_filename = os.path.basename(str(filename)) if new_irods_filename is None else new_irods_filename
         irods_file_path = path + "/" + base_filename
         session = self._cache.switch(alias)
         try:
