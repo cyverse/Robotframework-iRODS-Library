@@ -9,8 +9,9 @@ ${irodsport}      1247
 ${username}       username_here
 ${password}       password_here
 ${zone}           zone_here
-${my_file}        ../../test/put_test.txt
-${put_directory}   ../../test/put_dir
+${my_file}        test/put_test.txt
+${put_directory}  test/put_dir
+${new_filename}   put_new_test.txt
 
 *** Test Cases ***
 Connect-Not-Valid
@@ -65,6 +66,29 @@ Put-File
     Log    ${output_list}
     List Should Contain Value    ${output_list}    ${output_base_filename}
 
+Put-File-New-Extension
+    [Tags]    functional
+    Comment    Connect and put file
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${output_base_filename} =    Put File Into Irods    /iplant/home/${username}    ${my_file}    new_irods_filename=${new_filename}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${output_list}
+    List Should Contain Value    ${output_list}    ${output_base_filename}
+
+
+Delete-File
+    [Tags]    functional
+    Comment    Connect, put file, then delete
+    Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
+    ${output_base_filename} =    Put File Into Irods    /iplant/home/${username}    ${my_file}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${output_list}
+    List Should Contain Value    ${output_list}    ${output_base_filename}
+    Delete_File_From_Irods    /iplant/home/${username}/${output_base_filename}
+    ${output_list} =    List Contents of Collection    /iplant/home/${username}
+    Log    ${output_list}
+    List Should Not Contain Value    ${output_list}    ${output_base_filename}
+
 Add-Metadata-For-File
     [Tags]    functional
     Comment    Connect and add metadata for first file in collection
@@ -115,10 +139,11 @@ Put-Directory
     [Tags]    functional
     Comment    Connect and put directory
     Connect To Grid    ${irodshost}    ${irodsport}    ${username}    ${password}    ${zone}
-    ${output_base_filename} =    Put Directory Into Irods    /iplant/home/${username}    ${put_directory}
+    ${output_base_directory_name} =    Put Directory Into Irods    /iplant/home/${username}    ${put_directory}
+    Log    ${output_base_directory_name}
     ${output_list} =    List Contents of Collection    /iplant/home/${username}
     Log    ${output_list}
-    List Should Contain Value    ${output_list}    /iplant/home/${username}/${output_base_filename}
+    List Should Contain Value    ${output_list}    /iplant/home/${username}/${output_base_directory_name}
 
 Get-Directory
     [Tags]    functional
@@ -135,6 +160,7 @@ Create a collection
     Comment    Connect and create a new collection
     Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
     ${CollectionID} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}
+
 
 #Attempt to Create a collection that already exists
 #    [Tags]    regression

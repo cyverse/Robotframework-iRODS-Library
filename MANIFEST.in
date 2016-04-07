@@ -1,0 +1,4 @@
+include MANIFEST.in
+include *.txt LICENSE
+include *.cfg
+recursive-include test *.robot
