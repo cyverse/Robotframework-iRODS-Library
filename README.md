@@ -7,12 +7,17 @@ A library for interacting with Python-iRods from RobotFramework.
 
 Install Robotframework-iRODSLibrary and it's dependencies
 
-checkout the source and install
+Install via pip
+```bash
+pip install -U Robotframework-iRODS
+```
+or install via source
 ```bash
 git clone https://github.com/cyverse/Robotframework-iRODS-Library
 cd Robotframework-iRODS-Library
 sudo python setup.py install
 ```
+
 
 # Documentation
 
