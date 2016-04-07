@@ -9,12 +9,13 @@ ${UserName}       username_here
 ${Password}       password_here
 ${Zone}           zone_here
 ${my_file}        ../../test/put_test.txt
+${ConnAlias}      QATesting
 
 *** Test Cases ***
 Connect to valid iRODS grid
     [Tags]    functional
     Comment    Connect to iRods Grid
-    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}    qairods
+    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}    ${ConnAlias}
     ${output} =    Check Connection    qairods
     Log    ${output}
     Should Be True    ${output}
@@ -25,7 +26,7 @@ Create a collection
     Set Test Variable    ${NewCollName}    NewCollectionName
     Comment    Connect and create a new collection
     Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
-    ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}    qairods
+    ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}    ${ConnAlias}
     Should Contain    ${CollectionPath}    /iplant/home/${UserName}/${NewCollName}
 
 Create a collection that exists
@@ -34,7 +35,7 @@ Create a collection that exists
     Set Test Variable    ${NewCollName}    NewCollectionName
     Comment    Connect and create a new collection
     Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
-    ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}    qairods
+    ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}    ${ConnAlias}
     Log    ${CollectionPath}
     Comment    Should Contain    ${CollectionPath}    /iplant/home/${UserName}/${NewCollName}
     Should Contain    ${CollectionPath}    The collection already exists
@@ -46,7 +47,7 @@ Rename a collection that does not exist
     Set Test Variable    ${NewColName}    CollectionNameRenamed
     Comment    Connect and delte an existing collection
     Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
-    ${output}    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}    qairods
+    ${output}    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}    ${ConnAlias}
     Log    ${output}
     Should Contain    ${output}    An error occurred
 
@@ -56,16 +57,16 @@ Rename a collection
     Set Test Variable    ${CurColName}    NewCollectionName
     Set Test Variable    ${NewColName}    CollectionNameRenamed
     Comment    Connect and delte an existing collection
-    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
-    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}    qairods
+    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}    ${ConnAlias}
+    Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}    ${ConnAlias}
 
 Delete a collection
     [Tags]    functional
     Comment    Define variables
     Set Test Variable    ${CollName}    CollectionNameRenamed
     Comment    Connect and delte an existing collection
-    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
-    Delete A Collection    /iplant/home/${UserName}/${CollName}    False    True    qairods
+    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}    ${ConnAlias}
+    Delete A Collection    /iplant/home/${UserName}/${CollName}    False    True    ${ConnAlias}
 
 Delete with recursive and not send to trash (force)
     [Tags]    functional    skipped
@@ -76,9 +77,9 @@ Delete with recursive and send to trash (no force)
 Add a file to a collection
     [Tags]    functional    skipped
     Comment    Connect and put file
-    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}    ${zone}
-    ${output_base_filename} =    Put File Into Irods    /iplant/home/${UserName}    ${my_file}
-    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}
+    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}    ${zone}    ${ConnAlias}
+    ${output_base_filename} =    Put File Into Irods    /iplant/home/${UserName}    ${my_file}    ${ConnAlias}
+    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}    ${ConnAlias}
     Log    ${output_list}
     List Should Contain Value    ${output_list}    ${output_base_filename}
 
@@ -94,20 +95,20 @@ Batch upload files
 List the contents of a collection
     [Tags]    functional    skipped
     Comment    Connect and list contents of path
-    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}
-    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}
+    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}    ${ConnAlias}
+    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}    ${ConnAlias}
     Log    ${output_list}
     List Should Contain Value    ${output_list}    test.txt
 
 Download a file
     [Tags]    functional    skipped
     Comment     Connect and grab file
-    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}
-    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}
+    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}    ${ConnAlias}
+    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}    ${ConnAlias}
     Log    ${output_list}
     ${first_in_list} =    Get From List    ${output_list}    0
     Log    ${first_in_list}
-    Get File From Irods    /iplant/home/${username}/${first_in_list}
+    Get File From Irods    /iplant/home/${username}/${first_in_list}    ${ConnAlias}
     File Should Exist    ${first_in_list}
 
 Download a collection
@@ -116,24 +117,24 @@ Download a collection
 Connect on behalf of User
     [Tags]    functional
     Comment    Define Variables
-    Set Test Variable    ${iRODSHost}    qairods.iplantcollaborative.org
-    Set Test Variable    ${iRODSPort}    1247
+    Comment    Set Test Variable    ${iRODSHost}    qairods.iplantcollaborative.org
+    Comment    Set Test Variable    ${iRODSPort}    1247
     Set Test Variable    ${iRoDSAdminUser}    de-irods
     Set Test Variable    ${iRODSAdminPass}    SlamDunk99
-    Set Test Variable    ${UserName}    ipctest
-    Set Test Variable    ${Password}    1PCTest$
-    Set Test Variable    ${Zone}    iplant
-    Set Test Variable    ${UserZone}    iplant
+    Comment    Set Test Variable    ${UserName}    ipctest
+    Comment    Set Test Variable    ${Password}    1PCTest$
+    Comment    Set Test Variable    ${Zone}    iplant
+    Set Test Variable    ${UserZone}    ${Zone}
     Comment    Connect to iRods Grid as de-irods on behalf of ipctest
-    Connect To Grid On Behalf    ${irodshost}    ${irodsport}    ${iRODSAdminUser}    ${iRODSAdminPass}   ${Zone}    ${UserName}    ${UserZone}    qairods2
-    ${output} =    Check Connection    qairods2
+    Connect To Grid On Behalf    ${irodshost}    ${irodsport}    ${iRODSAdminUser}    ${iRODSAdminPass}   ${Zone}    ${UserName}    ${UserZone}    ${ConnAlias}2
+    ${output} =    Check Connection    ${ConnAlias}2
     Log    ${output}
     Should Be True    ${output}
-    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}    qairods2
+    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}    ${ConnAlias}2
     Log    ${output_list}
     List Should Contain Value    ${output_list}    /iplant/home/${UserName}/TestData_qa-3
-    Disconnect From Grid    qairods2
+    Disconnect From Grid    ${ConnAlias}2
 
 Disconnect from a grid
     [Tags]    smoke
-    Disconnect From Grid    qairods
+    Disconnect From Grid    ${ConnAlias}
