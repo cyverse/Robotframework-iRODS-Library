@@ -59,7 +59,7 @@ class iRODSLibrary(object):
 
         Example usage:
         | # To connect to foo.bar.org's iRODS service on port 1247 |
-        | Connect To Grid | foo.bar.org | ${1247} | jdoe | jdoePassword | tempZone | UAT
+        | Connect To Grid | foo.bar.org | ${1247} | adminUser | AdminUserPassword | tempZone | clientUser | clientZone | connectionAlias
 
         """
         host = str(host)
@@ -79,8 +79,10 @@ class iRODSLibrary(object):
 
     def check_connection(self, alias='default_connection'):
         """ See if there is a valid connection to the iRODS server
+            'alias' - Robotframework alias to identify the connection
+            Returns boolean on connection state
 
-        Exmaple usage:
+        Example usage:
         | Set Test Varialbe | ${ConnectionAlias} | ProductionDataGrid
         | ${output} = | Check Connection | ${ConnectionAlias}
         | Log | ${output}
@@ -100,6 +102,15 @@ class iRODSLibrary(object):
 
     def create_a_collection(self, path=None, alias="default_connection"):
         """ Create a new iRODS collection at the given path
+            using the path parameter passed in to create an iRODS collection.
+            'alias' - Robotframework alias to identify the connection
+            'path'  - path and colleciton name to create
+            Returns either the collection created or error message
+
+        Example usage:
+        | ${output} = | Create A Collection | /tempZone/home/jdoe/NewCollectionName | connectionAlias
+        | Log | ${output}
+        | Should Not Contain | ${output} | error
 
         """
         logger.info('Create a Collection : alias=%s, path=%s' % (alias, path))
@@ -115,6 +126,16 @@ class iRODSLibrary(object):
 
     def rename_a_collection(self, oldpath=None, newpath=None, alias="default_connection"):
         """ Rename an existing iRODS collection
+            using the path parameter passed in.
+            'alias'   - Robotframework alias to identify the connection
+            'oldpath' - original collection name and path
+            'newpath' - new collection name and path
+            Returns either the collection created or error message
+
+        Example usage:
+        | ${output} = | Rename A Collection | /tempZone/home/jdoe/OrigCollectionName | /tempZone/home/jdoe/NewCollectionName | connectionAlias
+        | Log | ${output}
+        | Should Not Contain | ${output} | error
 
         """
         logger.info('Rename a Collection : alias=%s, oldpath=%s, newpath=%s' % (alias, oldpath, newpath))
@@ -131,9 +152,15 @@ class iRODSLibrary(object):
     def delete_a_collection(self, path=None, recursive=True, force=False, alias="default_connection"):
         """ Delete an existing iRODS collection at the given path
 
-            'path' = the collection you want to delete (full path)
-            'recursive' = boolean defaults to true
-            'force' = boolean defaults to false (all items sent to trash)
+            'path'      - the collection you want to delete (full path)
+            'recursive' - boolean defaults to true
+            'force'     - boolean defaults to false (all items sent to trash)
+            'alias'     - Robotframework alias to identify the connection
+
+        Example usage:
+        | ${output} = | Delete A Collection | /tempZone/home/jdoe/NewCollectionName | connectionAlias
+        | Log | ${output}
+        | Should Not Contain | ${output} | error
 
         """
         logger.info('Delete a Collection : alias=%s, path=%s, recursive=%s, force=%s' % (alias, path, recursive, force))
@@ -145,6 +172,16 @@ class iRODSLibrary(object):
 
     def list_contents_of_collection(self, path=None, alias="default_connection"):
         """ Provide a path to list contents of
+            'path'  - the path/collection you want to list contents of
+            'alias' - Robotframework alias to identify the connection
+            Returns a list of the contents of the collection passed in
+
+        Example usage:
+        | ${CollectionList} = | List Contents of Collection | /tempZone/home/jdoe/NewCollectionName | connectionAlias
+        | Log | ${output}
+        | Should Not Contain | ${output} | error
+        | List Should Contain Value | ${output} | filename.txt
+        | List Should Contain Value | ${output} | NollectionName
 
         """
         logger.info('List Contents Of Collection : alias=%s, path=%s' % (alias, path))
@@ -161,7 +198,13 @@ class iRODSLibrary(object):
         return list_of_contents
     
     def put_directory_into_irods(self, path=None, directory_name="./test_dir", alias="default_connection"):
-        """Provide a path for a directory to be uploaded
+        """ Provide a path for a directory to be uploaded
+            'path'           - the path/collection you want to list contents of
+            'directory_name' - the path/collection you want to list contents of
+            'alias'          - Robotframework alias to identify the connection
+
+        Example usage:
+        | Put Directory Into iRODS | /tempZone/home/jdoe/CollectionName | ./RelativePath/LocalDirectory  | connectionAlias
 
         """
         logger.info('Put Directory Into iRODS : alias=%s, path=%s, directory_name=%s ' % (alias, path, directory_name))
@@ -191,6 +234,13 @@ class iRODSLibrary(object):
  
     def put_file_into_irods(self, path=None, filename="./test.txt", alias="default_connection", new_irods_filename=None):
         """ Provide a path for a file to be uploaded
+            'path'               - the path/collection you want to list contents of
+            'filename'           - the path/collection you want to list contents of
+            'new_irods_filename' - the path/collection you want to list contents of
+            'alias'              - Robotframework alias to identify the connection
+
+        Example usage:
+        | Put File Into iRODS | /tempZone/home/jdoe/CollectionName | ./RelativePath/LocalDirectory/fileName.txt  | connectionAlias | NewFileName.txt
 
         """
         logger.info('Put File Into iRODS : alias=%s, path=%s, filename=%s ' % (alias, path, filename))
@@ -213,8 +263,13 @@ class iRODSLibrary(object):
         return base_filename
 
     def delete_file_from_irods(self, path=None, alias="default_connection"):
-        """ Provide a path for a file to be deleted
-            
+        """ Remove a file from iRODS.
+            'path'  - the path/collection you want to list contents of
+            'alias' - Robotframework alias to identify the connection
+
+        Example usage:
+        | Delete File From iRODS | /iplant/home/username/filename.txt
+
         """
         logger.info('Put File Into iRODS : alias=%s, path=%s' % (alias, path))
         path = str(path)
@@ -225,8 +280,15 @@ class iRODSLibrary(object):
         except:
             print("FILE DOES NOT EXISTS")
 
-    def get_directory_from_irods(self, path=None, alias="default_connection", local_path=None):
-        """Provide a path for a directory to be pull down
+    def get_collection_from_irods(self, path=None, alias="default_connection", local_path=None):
+        """ Provide a path for a directory to be pull down
+            'alias'       - Robotframework alias to identify the connection
+            'path'        - the path of the file in irods
+            'local_path' - the path to download the file to locally
+            If no local_path is specified, will download to current working directory
+
+        Example usage:
+        | Get Collection From iRODS | /tempZone/home/userName/collectionName | connectionAlias | ./localDowloads
 
         """
         logger.info('Get File From iRODS : alias=%s, path=%s, local_path=%s ' % (alias, path, local_path))
@@ -258,6 +320,13 @@ class iRODSLibrary(object):
 
     def get_file_from_irods(self, path=None, alias="default_connection", local_path=None):
         """ Provide a path for a file to be pulled down
+            'alias'       - Robotframework alias to identify the connection
+            'path'        - the path of the file in irods
+            'local_path' - the path to download the file to locally
+            If no local_path is specified, will download to current working directory
+
+        Example usage:
+        | Get File From iRODS | /tempZone/home/userName/path/fileName.txt | connectionAlias | ./localDowloads
 
         """
         logger.info('Get File From iRODS : alias=%s, path=%s, local_path=%s ' % (alias, path, local_path))
@@ -287,6 +356,14 @@ class iRODSLibrary(object):
     
     def add_metadata_for_file(self, path=None, key="default_key", value="default_value", alias="default_connection"):
         """ Add metadata for a file using key:value pairs
+            'alias'       - Robotframework alias to identify the connection
+            'path'        - the path of the file in irods
+            'key'         - key for the key/value pair
+            'value'       - value for the key/value pair
+
+        Example usage:
+        | ${output} = | Add Metadata For Collection | /iplant/home/username/collectionName | key | value | ${ConnectionAlias}
+        | Log | ${output}
 
         """
         logger.info('Add Metadata For File : alias=%s, path=%s, key=%s, value=%s ' % (alias, path, key, value))
@@ -300,6 +377,14 @@ class iRODSLibrary(object):
 
     def add_metadata_for_collection(self, path, key="default_key", value="default_value", alias="default_connection"):
         """ Add metadata for a Collection using key:value pairs
+            'alias'       - Robotframework alias to identify the connection
+            'path'        - the path of the file in irods
+            'key'         - key for the key/value pair
+            'value'       - value for the key/value pair
+
+        Example usage:
+        | ${output} = | Add Metadata For Collection | /iplant/home/username/collectionName | key | value | ${ConnectionAlias}
+        | Log | ${output}
 
         """
         logger.info('Add Metadata For Collection : alias=%s, path=%s, key=%s, value=%s ' % (alias, path, key, value))
@@ -313,6 +398,13 @@ class iRODSLibrary(object):
 
     def get_metadata_for_file(self, path, alias="default_connection"):
         """ Get metadata for a file returning key:value pairs
+            'alias'       - Robotframework alias to identify the connection
+            'path'        - the path of the file in irods
+
+        Example usage:
+        | ${output} = | Get Metadata For File | /iplant/home/username/filename.txt | ${ConnectionAlias}
+        | Log | ${output}
+        | List Should Contain Value | ${output} | key_1
 
         """
         logger.info('Get Metadata For File : alias=%s, path=%s ' % (alias, path))
@@ -324,6 +416,13 @@ class iRODSLibrary(object):
 
     def get_metadata_for_collection(self, path, alias="default_connection"):
         """ Get metadata for a collection returning key:value pairs
+            'alias'       - Robotframework alias to identify the connection
+            'path'        - the path of the file in irods
+
+        Example usage:
+        | ${output} = | Get Metadata For Collection | /iplant/home/username
+        | Log | ${output}
+        | List Should Contain Value | ${output} | key_1
 
         """
         logger.info('Get Metadata For Collection : alias=%s, path=%s ' % (alias, path))
@@ -335,6 +434,7 @@ class iRODSLibrary(object):
 
     def disconnect_from_grid(self, alias='default_connection'):
         """ Delete connection to an iRODS server
+            'alias'       - Robotframework alias to identify the connection
 
         Example usage:
         | Disconnect From Grid | ${ConnectionAlias}
@@ -351,7 +451,8 @@ class iRODSLibrary(object):
     def disconnect_from_all_grids(self):
         """ Delete connections to All iRODS servers
 
-        This would be good to use in Suite Teardown to ensure all iRODS connections are closed, even if there were errors during the suite run.
+        This would be good to use in Suite Teardown to ensure all iRODS connections are closed, even if there were
+        errors during the suite run.
 
         Example usage:
         | Disconnect From All Grids
