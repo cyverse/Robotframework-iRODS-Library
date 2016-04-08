@@ -23,6 +23,8 @@ sudo python setup.py install
 
 For individual keyword documentation see the following:
 
+[http://cyverse.github.io/Robotframework-iRODS-Library/](http://cyverse.github.io/Robotframework-iRODS-Library/)
+
 You can update the documentation once checked out by going to the top directory of this repo and issuing the following command:
 ```bash
 python -m robot.libdoc src/iRODSLibrary/iRODSLibrary.py docs/iRODSLibraryKeywords.html
