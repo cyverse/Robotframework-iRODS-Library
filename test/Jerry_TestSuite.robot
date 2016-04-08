@@ -13,35 +13,49 @@ ${ConnAlias}      QATesting
 
 *** Test Cases ***
 Connect to valid iRODS grid
-    [Tags]    functional
+    [Tags]    smoke
     Comment    Connect to iRods Grid
     Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}    ${ConnAlias}
-    ${output} =    Check Connection    qairods
+
+Verify iRODS connection
+    [Tags]    smoke
+    ${output} =    Check Connection    ${ConnAlias}
     Log    ${output}
     Should Be True    ${output}
 
-Create a collection
-    [Tags]    functional
+Create iRODSLibrary_Regression collection
+    [Tags]    smoke
     Comment    Define variables
-    Set Test Variable    ${NewCollName}    NewCollectionName
+    Set Test Variable    ${NewCollName}    iRODSLibrary_Regression
     Comment    Connect and create a new collection
     Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
     ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}    ${ConnAlias}
     Should Contain    ${CollectionPath}    /iplant/home/${UserName}/${NewCollName}
 
-Create a collection that exists
+Create a collection
     [Tags]    functional
     Comment    Define variables
+    Set Test Variable    ${PathAdd}    iRODSLibrary_Regression
     Set Test Variable    ${NewCollName}    NewCollectionName
     Comment    Connect and create a new collection
     Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
-    ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${NewCollName}    ${ConnAlias}
+    ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${PathAdd}/${NewCollName}    ${ConnAlias}
+    Should Contain    ${CollectionPath}    /iplant/home/${UserName}/${PathAdd}/${NewCollName}
+
+Create a collection that exists
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${PathAdd}    iRODSLibrary_Regression
+    Set Test Variable    ${NewCollName}    NewCollectionName
+    Comment    Connect and create a new collection
+    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}
+    ${CollectionPath} =    Create A Collection    /iplant/home/${UserName}/${PathAdd}/${NewCollName}    ${ConnAlias}
     Log    ${CollectionPath}
     Comment    Should Contain    ${CollectionPath}    /iplant/home/${UserName}/${NewCollName}
     Should Contain    ${CollectionPath}    The collection already exists
 
 Rename a collection that does not exist
-    [Tags]    functional
+    [Tags]    functional    skipped
     Comment    Define variables
     Set Test Variable    ${CurColName}    NonExistCollection
     Set Test Variable    ${NewColName}    CollectionNameRenamed
@@ -52,7 +66,7 @@ Rename a collection that does not exist
     Should Contain    ${output}    An error occurred
 
 Rename a collection
-    [Tags]    functional
+    [Tags]    functional    skipped
     Comment    Define variables
     Set Test Variable    ${CurColName}    NewCollectionName
     Set Test Variable    ${NewColName}    CollectionNameRenamed
@@ -61,7 +75,7 @@ Rename a collection
     Rename A Collection    /iplant/home/${UserName}/${CurColName}    /iplant/home/${UserName}/${NewColName}    ${ConnAlias}
 
 Delete a collection
-    [Tags]    functional
+    [Tags]    functional    skipped
     Comment    Define variables
     Set Test Variable    ${CollName}    CollectionNameRenamed
     Comment    Connect and delte an existing collection
@@ -75,7 +89,7 @@ Delete with recursive and send to trash (no force)
     [Tags]    functional    skipped
 
 Add a file to a collection
-    [Tags]    functional    skipped
+    [Tags]    functional    skipped    skipped
     Comment    Connect and put file
     Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}    ${zone}    ${ConnAlias}
     ${output_base_filename} =    Put File Into Irods    /iplant/home/${UserName}    ${my_file}    ${ConnAlias}
@@ -93,7 +107,7 @@ Batch upload files
     [Tags]    functional    skipped
 
 List the contents of a collection
-    [Tags]    functional    skipped
+    [Tags]    functional    skipped    skipped
     Comment    Connect and list contents of path
     Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}    ${ConnAlias}
     ${output_list} =    List Contents of Collection    /iplant/home/${UserName}    ${ConnAlias}
@@ -101,7 +115,7 @@ List the contents of a collection
     List Should Contain Value    ${output_list}    test.txt
 
 Download a file
-    [Tags]    functional    skipped
+    [Tags]    functional    skipped    skipped
     Comment     Connect and grab file
     Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}    ${ConnAlias}
     ${output_list} =    List Contents of Collection    /iplant/home/${UserName}    ${ConnAlias}
@@ -117,13 +131,8 @@ Download a collection
 Connect on behalf of User
     [Tags]    functional
     Comment    Define Variables
-    Comment    Set Test Variable    ${iRODSHost}    qairods.iplantcollaborative.org
-    Comment    Set Test Variable    ${iRODSPort}    1247
     Set Test Variable    ${iRoDSAdminUser}    de-irods
     Set Test Variable    ${iRODSAdminPass}    SlamDunk99
-    Comment    Set Test Variable    ${UserName}    ipctest
-    Comment    Set Test Variable    ${Password}    1PCTest$
-    Comment    Set Test Variable    ${Zone}    iplant
     Set Test Variable    ${UserZone}    ${Zone}
     Comment    Connect to iRods Grid as de-irods on behalf of ipctest
     Connect To Grid On Behalf    ${irodshost}    ${irodsport}    ${iRODSAdminUser}    ${iRODSAdminPass}   ${Zone}    ${UserName}    ${UserZone}    ${ConnAlias}2
@@ -135,6 +144,18 @@ Connect on behalf of User
     List Should Contain Value    ${output_list}    /iplant/home/${UserName}/TestData_qa-3
     Disconnect From Grid    ${ConnAlias}2
 
+Remove Toplevel Regression Collection
+    [Tags]    functional
+    Comment    Define variables
+    Set Test Variable    ${CollName}    iRODSLibrary_Regression
+    Comment    Connect and delte an existing collection
+    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}    ${ConnAlias}
+    Delete A Collection    /iplant/home/${UserName}/${CollName}    True    True    ${ConnAlias}
+
 Disconnect from a grid
     [Tags]    smoke
     Disconnect From Grid    ${ConnAlias}
+
+Disconnect from all grids
+    [Tags]    smoke
+    Disconnect From All Grids
