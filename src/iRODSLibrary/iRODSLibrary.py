@@ -59,7 +59,7 @@ class iRODSLibrary(object):
 
         Example usage:
         | # To connect to foo.bar.org's iRODS service on port 1247 |
-        | Connect To Grid | foo.bar.org | ${1247} | adminUser | AdminUserPassword | tempZone | clientUser | clientZone | connectionAlias
+        | Connect To Grid On Behalf | foo.bar.org | ${1247} | adminUser | AdminUserPassword | tempZone | clientUser | clientZone | connectionAlias
 
         """
         host = str(host)
@@ -79,11 +79,11 @@ class iRODSLibrary(object):
 
     def check_connection(self, alias='default_connection'):
         """ See if there is a valid connection to the iRODS server
-            'alias' - Robotframework alias to identify the connection
-            Returns boolean on connection state
+            'alias' - Robotframework alias to identify the connection.
+            Returns boolean of connection state
 
         Example usage:
-        | Set Test Varialbe | ${ConnectionAlias} | ProductionDataGrid
+        | Set Test Variable | ${ConnectionAlias} | ProductionDataGrid
         | ${output} = | Check Connection | ${ConnectionAlias}
         | Log | ${output}
         | Should Be True | ${output}
@@ -288,7 +288,7 @@ class iRODSLibrary(object):
             If no local_path is specified, will download to current working directory
 
         Example usage:
-        | Get Collection From iRODS | /tempZone/home/userName/collectionName | connectionAlias | ./localDowloads
+        | Get Collection From iRODS | /tempZone/home/userName/collectionName | connectionAlias | ./localDownloads
 
         """
         logger.info('Get File From iRODS : alias=%s, path=%s, local_path=%s ' % (alias, path, local_path))
@@ -362,7 +362,7 @@ class iRODSLibrary(object):
             'value'       - value for the key/value pair
 
         Example usage:
-        | ${output} = | Add Metadata For Collection | /iplant/home/username/collectionName | key | value | ${ConnectionAlias}
+        | ${output} = | Add Metadata For File | /iplant/home/username/collectionName | key | value | ${ConnectionAlias}
         | Log | ${output}
 
         """
