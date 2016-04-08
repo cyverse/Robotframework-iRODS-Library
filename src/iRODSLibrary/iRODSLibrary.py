@@ -80,6 +80,12 @@ class iRODSLibrary(object):
     def check_connection(self, alias='default_connection'):
         """ See if there is a valid connection to the iRODS server
 
+        Exmaple usage:
+        | Set Test Varialbe | ${ConnectionAlias} | ProductionDataGrid
+        | ${output} = | Check Connection | ${ConnectionAlias}
+        | Log | ${output}
+        | Should Be True | ${output}
+
         """
         try:
             logger.info('Check Connection : alias=%s' % (alias))
@@ -258,12 +264,12 @@ class iRODSLibrary(object):
         path = str(path)
         alias = str(alias)
         new_file_path = os.path.basename(path) if local_path is None else local_path
-        source = self.get_source(path=path, alias=alias)
+        source = self._get_source(path=path, alias=alias)
         file = open(new_file_path, 'w+')
         file.write(source)
         file.close()
 
-    def get_source(self, path=None, alias="default_connection"):
+    def _get_source(self, path=None, alias="default_connection"):
         """ Get Source
 
         """
@@ -328,7 +334,10 @@ class iRODSLibrary(object):
         return [x.name for x in obj.metadata.items()]
 
     def disconnect_from_grid(self, alias='default_connection'):
-        """ Delete connection to the iRODS server
+        """ Delete connection to an iRODS server
+
+        Example usage:
+        | Disconnect From Grid | ${ConnectionAlias}
 
         """
         try:
@@ -341,6 +350,11 @@ class iRODSLibrary(object):
 
     def disconnect_from_all_grids(self):
         """ Delete connections to All iRODS servers
+
+        This would be good to use in Suite Teardown to ensure all iRODS connections are closed, even if there were errors during the suite run.
+
+        Example usage:
+        | Disconnect From All Grids
 
         """
         logger.info('Disconnect From All Grid')
