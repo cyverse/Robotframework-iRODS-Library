@@ -167,7 +167,7 @@ class iRODSLibrary(object):
         alias = str(alias)
         path = str(path)
         session = self._cache.switch(alias)
-        coll = session.collections.remove(path)
+        coll = session.collections.remove(path, recursive, force)
 
 
     def list_contents_of_collection(self, path=None, alias="default_connection"):
