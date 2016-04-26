@@ -15,7 +15,7 @@ ${ConnAlias}      QATesting
 Connect to valid iRODS grid
     [Tags]    smoke
     Comment    Connect to iRods Grid
-    Connect To Grid    ${irodshost}    ${irodsport}    ${UserName}    ${Password}   ${zone}    ${ConnAlias}
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}   ${Zone}    ${ConnAlias}
 
 Verify iRODS connection
     [Tags]    smoke
@@ -84,6 +84,8 @@ Delete a collection
 
 Delete with recursive and not send to trash (force)
     [Tags]    functional    skipped
+    Set Test Variable    ${PathAdd}    iRODSLibrary_Regression
+    Delete A Collection    /iplant/home/${UserName}/${PathAdd}    True    True    ${ConnAlias}
 
 Delete with recursive and send to trash (no force)
     [Tags]    functional    skipped
@@ -131,8 +133,6 @@ Download a collection
 Connect on behalf of User
     [Tags]    functional
     Comment    Define Variables
-    Set Test Variable    ${iRoDSAdminUser}    de-irods
-    Set Test Variable    ${iRODSAdminPass}    SlamDunk99
     Set Test Variable    ${UserZone}    ${Zone}
     Comment    Connect to iRods Grid as de-irods on behalf of ipctest
     Connect To Grid On Behalf    ${irodshost}    ${irodsport}    ${iRODSAdminUser}    ${iRODSAdminPass}   ${Zone}    ${UserName}    ${UserZone}    ${ConnAlias}2
@@ -149,8 +149,10 @@ Remove Toplevel Regression Collection
     Comment    Define variables
     Set Test Variable    ${CollName}    iRODSLibrary_Regression
     Comment    Connect and delte an existing collection
-    Comment    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${UserName}    ${Password}    ${Zone}    ${ConnAlias}
-    Delete A Collection    /iplant/home/${UserName}/${CollName}    True    True    ${ConnAlias}
+    Connect To Grid    ${iRODSHost}    ${iRODSPort}    ${iRODSAdminUser}    ${iRODSAdminPass}    ${Zone}    ${ConnAlias}3
+    Delete A Collection    /iplant/home/${UserName}/${CollName}    True    True    ${ConnAlias}3
+    ${output_list} =    List Contents of Collection    /iplant/home/${UserName}    ${ConnAlias}3
+    Should Not Contain    ${output_list}    /iplant/home/${UserName}/${CollName}
 
 Disconnect from a grid
     [Tags]    smoke

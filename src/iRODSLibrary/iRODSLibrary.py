@@ -191,6 +191,8 @@ class iRODSLibrary(object):
             return []
         session = self._cache.switch(alias)
         coll = session.collections.get(path)
+        if coll is None:
+            return []
         # Grab files and place them in list of contents
         list_of_contents = [obj.name for obj in coll.data_objects]
         # Grab dirs and place them in the list of contents
