@@ -158,7 +158,7 @@ class iRODSLibrary(object):
             'alias'     - Robotframework alias to identify the connection
 
         Example usage:
-        | ${output} = | Delete A Collection | /tempZone/home/jdoe/NewCollectionName | connectionAlias
+        | Delete A Collection | /tempZone/home/jdoe/NewCollectionName | connectionAlias
         | Log | ${output}
         | Should Not Contain | ${output} | error
 
@@ -168,7 +168,6 @@ class iRODSLibrary(object):
         path = str(path)
         session = self._cache.switch(alias)
         coll = session.collections.remove(path, recursive, force)
-
 
     def list_contents_of_collection(self, path=None, alias="default_connection"):
         """ Provide a path to list contents of
